@@ -1,26 +1,40 @@
-import React from 'react';
-import logo from './logo.svg';
+import React, { useEffect, useState } from 'react';
 import './App.css';
 import Foo from './Components/Foo';
+import * as signalR from "@microsoft/signalr";
+
+export interface Message {
+  name: string;
+  message: string;
+}
+
+const connection: signalR.HubConnection = new signalR.HubConnectionBuilder().withUrl("https://localhost:5001/hubs/test").build();
 
 function App() {
+  const [messages, updateMessages] = useState<Message[]>([])
+
+  useEffect(() => {
+    connection.on("broadcastMessage", (name: string, message: string) => {
+      updateMessages(m => m = [...m, { name, message }])
+    });
+
+    connection.on("deleteMessage", (key: string) => {
+      updateMessages(m => m = m.filter(o => o.name + o.message !== key))
+    });
+
+    connection.start().catch(err => console.error(err));
+
+    return function cleanup() {
+      console.debug('Disconnecting from hub')
+      connection.stop()
+    };
+  }, [])
+
+
+
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-      <Foo />
+      <Foo hub={connection} messages={messages} />
     </div>
   );
 }
