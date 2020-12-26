@@ -25,16 +25,12 @@ function App() {
 
       connection.on("deleteMessage", (key: string) => updateMessages(m => m = m.filter(o => o.name + o.message !== key)))
 
-      connection.start().catch(err => console.error(err));
+      connection.start().catch(err => console.error(err))
       setHubConnection(connection)
 
       return () => {
-        console.debug('Disconnecting from hub')
         connection.stop()
-      };
-    }
-    else {
-      console.debug('not authenticated...')
+      }
     }
   }, [isAuthenticated, getAccessTokenSilently])
 
@@ -45,7 +41,7 @@ function App() {
       <Header>
         <div className="logo" />
         {isAuthenticated
-          ? <Button onClick={() => logout()} type='primary'>Log out</Button>
+          ? <Button onClick={() => logout({ returnTo: window.location.origin })} type='primary'>Log out</Button>
           : <Button onClick={() => loginWithRedirect()} type='primary'>Log In</Button>
         }
       </Header>
