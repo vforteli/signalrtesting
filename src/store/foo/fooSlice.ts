@@ -5,8 +5,9 @@ const fooSlice = createSlice({
   name: 'foos',
   initialState: [] as Message[],
   reducers: {
-    sendMessage(state, action: PayloadAction<Message>) {
-      state.push(action.payload)
+    sendMessage(state, action: PayloadAction<string>) {
+      state.push({ message: action.payload, messageId: 'notyet', name: 'not available', timeSent: 'hsiefuh' })
+      // todo should this optimistically add a message?
     },
     deleteMessage(state, action: PayloadAction<string>) {
       state = state.filter(o => o.messageId !== action.payload)

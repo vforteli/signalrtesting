@@ -33,8 +33,7 @@ function FooList(props: FooListProps) {
         {
             title: "action",
             dataIndex: "action",
-            render: (text: any, record: Message) =>
-                <Button onClick={() => handleDelete(record.messageId)}>Delete</Button>
+            render: (text: any, record: Message) => <Button onClick={() => handleDelete(record.messageId)}>Delete</Button>
         }
     ]
 
