@@ -1,20 +1,49 @@
-import { createSlice, PayloadAction } from '@reduxjs/toolkit'
+import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit'
 import { Message } from '../../Components/FooTypes'
+
+
+export const fetchPreviousMessages = createAsyncThunk('foo/fetchPreviousMessages',
+  async () => {
+    const response = await fetch('https://localhost:5001/api/messages');
+    return await response.json();
+  }
+)
+
+export const sendMessage = createAsyncThunk('foo/sendMessage',
+  async (message: string) => {
+    // const response = await fetch('https://localhost:5001/api/messages');
+    // return await response.json();
+  }
+)
 
 const fooSlice = createSlice({
   name: 'foos',
   initialState: [] as Message[],
   reducers: {
-    sendMessage(state, action: PayloadAction<string>) {
-      state.push({ message: action.payload, messageId: 'notyet', name: 'not available', timeSent: 'hsiefuh' })
-      // todo should this optimistically add a message?
+    messageReceived(state, action: PayloadAction<Message>) {
+      state.push(action.payload)
     },
     deleteMessage(state, action: PayloadAction<string>) {
-      state = state.filter(o => o.messageId !== action.payload)
+      return state.filter(o => o.messageId !== action.payload)
+    },
+    clearMessages(state, action: PayloadAction) {
+      return []
+    },
+    getMessages(state, action: PayloadAction<Message[]>) {
+      state = action.payload
+    }
+  },
+  extraReducers: {
+    [fetchPreviousMessages.pending.toString()]: (state, action) => {
+      console.debug('fetching previous messages pending');
+    },
+    [fetchPreviousMessages.fulfilled.toString()]: (state, action) => {
+      console.debug('fetching previous messages fulfilled');
+      return action.payload;
     }
   }
 })
 
-export const { sendMessage, deleteMessage } = fooSlice.actions
+export const { messageReceived, clearMessages, deleteMessage, getMessages } = fooSlice.actions
 
 export default fooSlice.reducer

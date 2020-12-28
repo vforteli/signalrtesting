@@ -6,30 +6,22 @@ import { useAuth0 } from "@auth0/auth0-react";
 import Layout, { Content } from 'antd/lib/layout/layout';
 import { Message } from './Components/FooTypes';
 import AppHeader from './Components/Header/Header';
+import { useDispatch } from 'react-redux';
+import { clearMessages, deleteMessage, messageReceived } from './store/foo/fooSlice';
 
 function App() {
-  const [messages, setMessages] = useState<Message[]>([])
   const [hubConnection, setHubConnection] = useState<signalR.HubConnection | null>(null)
   const { isAuthenticated, getAccessTokenSilently } = useAuth0()
+  const dispatch = useDispatch()
 
+  // todo move all this into app global slice or similar
   useEffect(() => {
     if (isAuthenticated) {
-      (async () => {
-        try {
-          const response = await fetch('https://localhost:5001/api/messages')
-          setMessages(await response.json())
-        } catch (e) {
-          console.error(e)
-        }
-      })()
-
       const connection: signalR.HubConnection = new signalR.HubConnectionBuilder().withUrl("https://localhost:5001/hubs/test", { accessTokenFactory: getAccessTokenSilently }).build();
 
-      connection.on("broadcastMessage", (payload: Message) => setMessages(m => m = [...m, payload]))
-
-      connection.on("deleteMessage", (messageId: string) => setMessages(m => m = m.filter(o => o.messageId !== messageId)))
-
-      connection.on("clearMessages", () => setMessages([]))
+      connection.on("broadcastMessage", (message: Message) => dispatch(messageReceived(message)))
+      connection.on("deleteMessage", (messageId: string) => dispatch(deleteMessage(messageId)))
+      connection.on("clearMessages", () => dispatch(clearMessages()))
 
       connection.start().catch(err => console.error(err))
       setHubConnection(connection)
@@ -38,7 +30,7 @@ function App() {
         connection.stop()
       }
     }
-  }, [isAuthenticated, getAccessTokenSilently])
+  }, [isAuthenticated, getAccessTokenSilently, dispatch])
 
 
 
@@ -47,7 +39,7 @@ function App() {
       <AppHeader />
       <Content style={{ padding: '0 50px' }}>
         <div className="site-layout-content">
-          <Foo hub={hubConnection} messages={messages} />
+          <Foo hub={hubConnection} />
         </div>
       </Content>
     </Layout>

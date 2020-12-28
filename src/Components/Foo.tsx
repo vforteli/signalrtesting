@@ -1,26 +1,31 @@
-import React from "react"
+import React, { useEffect } from "react"
 import * as signalR from "@microsoft/signalr";
 import { Content } from "antd/lib/layout/layout";
 import FooList from "./FooList";
 import FooForm from "./FooForm";
-import { Message } from "./FooTypes";
+import { useDispatch } from "react-redux";
+import { fetchPreviousMessages } from "../store/foo/fooSlice";
 
 
 type FooProps = {
     hub: signalR.HubConnection | null,
-    messages: Message[]
 }
 
 function Foo(props: FooProps) {
+    const dispatch = useDispatch()
+
+    useEffect(() => {
+        dispatch(fetchPreviousMessages())
+    }, []);     // todo add isauthenticated etc
 
     return (
         <Content>
             <FooForm hub={props.hub} />
             <br />
             <br />
-            <FooList messages={props.messages} />
+            <FooList />
         </Content >
     )
 }
 
-export default Foo;
+export default React.memo(Foo);

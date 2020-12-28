@@ -6,11 +6,16 @@ import reportWebVitals from './reportWebVitals';
 import { Auth0Provider } from '@auth0/auth0-react';
 import { configureStore } from '@reduxjs/toolkit';
 import { Provider } from 'react-redux'
-import rootReducer from './rootReducer';
+import fooSlice from './store/foo/fooSlice';
+
 
 const store = configureStore({
-  reducer: rootReducer
+  reducer: {
+    messages: fooSlice
+  }
 })
+
+export type RootState = ReturnType<typeof store.getState>;
 
 ReactDOM.render(
   <React.StrictMode>

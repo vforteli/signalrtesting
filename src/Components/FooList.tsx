@@ -1,18 +1,14 @@
 import React, { } from "react"
 import { Table, Button } from 'antd'
 import { Message } from "./FooTypes"
+import { useSelector } from "react-redux"
+import { RootState } from ".."
 
 
-type FooListProps = {
-    messages: Message[]
-}
+function FooList() {
+    const messages = useSelector((state: RootState) => state.messages)
 
-function FooList(props: FooListProps) {
-
-    const handleDelete = async (messageId: string) => {
-        await fetch(`https://localhost:5001/api/messages/${messageId}`, { method: 'DELETE' })
-        // await props.hub.send('deleteMessage', key)
-    }
+    const handleDelete = async (messageId: string) => await fetch(`https://localhost:5001/api/messages/${messageId}`, { method: 'DELETE' });
 
     const columns = [
         {
@@ -39,7 +35,7 @@ function FooList(props: FooListProps) {
 
     return (
         <Table
-            dataSource={props.messages}
+            dataSource={messages}
             columns={columns}
             rowKey={o => o.messageId}
         />

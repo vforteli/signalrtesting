@@ -1,6 +1,8 @@
 import React, { useState } from "react"
 import * as signalR from "@microsoft/signalr";
 import { Button, Input } from 'antd'
+import { useDispatch } from "react-redux";
+import { sendMessage } from "../store/foo/fooSlice";
 
 
 type FooFormProps = {
@@ -9,8 +11,12 @@ type FooFormProps = {
 
 function FooForm(props: FooFormProps) {
     const [message, setMessage] = useState('')
+    const dispatch = useDispatch()
 
-    const sendMessage = async () => {
+    const handleSendMessage = async () => {
+        dispatch(sendMessage(message))
+
+        // todo this should be moved into dispatched sendMessage
         if (props.hub) {
             await props.hub.send('broadcastMessage', message)
             setMessage('')
@@ -23,13 +29,13 @@ function FooForm(props: FooFormProps) {
 
     const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
         if (e.key === 'Enter') {
-            sendMessage()
+            handleSendMessage()
         }
     }
 
     return (
         <>
-            <Input type="text" onChange={(e) => setMessage(e.target.value)} value={message} onKeyDown={e => handleKeyPress(e)}></Input> <Button onClick={() => sendMessage()}>Send</Button>
+            <Input type="text" onChange={(e) => setMessage(e.target.value)} value={message} onKeyDown={e => handleKeyPress(e)}></Input> <Button onClick={() => handleSendMessage()}>Send</Button>
             <Button onClick={() => clearMessages()}>Clear all</Button>
         </>
     )
