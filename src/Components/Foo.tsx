@@ -1,9 +1,9 @@
 import React from "react"
 import * as signalR from "@microsoft/signalr";
-import { Message } from "../App";
 import { Content } from "antd/lib/layout/layout";
 import FooList from "./FooList";
 import FooForm from "./FooForm";
+import { Message } from "./FooTypes";
 
 
 type FooProps = {

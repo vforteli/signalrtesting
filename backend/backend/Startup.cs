@@ -30,6 +30,7 @@ namespace backend
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "backend", Version = "v1" });
             });
 
+            services.AddSingleton<MockMessageService>();
             services.AddSignalR().AddAzureSignalR(Configuration["SignalrConnectionString"]);
             services.AddAuthentication(options =>
             {

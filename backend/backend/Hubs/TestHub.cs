@@ -5,18 +5,37 @@ using System.Threading.Tasks;
 
 namespace backend.Hubs
 {
+    public record MessageModel(
+        string Name,
+        Guid MessageId,
+        string Message,
+        DateTime TimeSent);
+
+
     [Authorize]
     public class TestHub : Hub
     {
-        public Task BroadcastMessage(string message)
+        private readonly MockMessageService _messageService;
+
+        public TestHub(MockMessageService messageService)
         {
-            return Clients.All.SendAsync("broadcastMessage", Context?.User?.Identity?.Name, message);
+            _messageService = messageService;
         }
 
-        public Task DeleteMessage(string key) =>
-          Clients.All.SendAsync("deleteMessage", key);
+        public Task BroadcastMessage(string message)
+        {
+            var item = new MessageModel(Context?.User?.Identity?.Name!, Guid.NewGuid(), message, DateTime.UtcNow);
 
-        public Task Echo(string message) =>
-            Clients.Client(Context.ConnectionId).SendAsync("echo", Context?.User?.Identity?.Name, $"{message} (echo from server)");
+            _messageService.Messages.TryAdd(item.MessageId, item);
+
+            // todo maybe send to all except caller            
+            return Clients.All.SendAsync("broadcastMessage", item);
+        }
+
+        public Task DeleteMessage(Guid messageId)
+        {
+            _messageService.Messages.TryRemove(messageId, out _);
+            return Clients.All.SendAsync("deleteMessage", messageId);
+        }
     }
 }

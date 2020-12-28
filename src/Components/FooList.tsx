@@ -1,6 +1,6 @@
 import React, { } from "react"
-import { Message } from "../App";
 import { Table, Button } from 'antd'
+import { Message } from "./FooTypes"
 
 
 type FooListProps = {
@@ -9,12 +9,17 @@ type FooListProps = {
 
 function FooList(props: FooListProps) {
 
-    const handleDelete = async (key: string) => {
-        await fetch(`https://localhost:5001/api/messages/${key}`, { method: 'DELETE' })
+    const handleDelete = async (messageId: string) => {
+        await fetch(`https://localhost:5001/api/messages/${messageId}`, { method: 'DELETE' })
         // await props.hub.send('deleteMessage', key)
     }
 
     const columns = [
+        {
+            title: 'Sent',
+            dataIndex: 'timeSent',
+            width: '150px',
+        },
         {
             title: 'name',
             dataIndex: 'name',
@@ -28,15 +33,16 @@ function FooList(props: FooListProps) {
         {
             title: "action",
             dataIndex: "action",
-            render: (text: any, record: any) =>
-                <Button onClick={() => handleDelete(record.key)}>Delete</Button>
+            render: (text: any, record: Message) =>
+                <Button onClick={() => handleDelete(record.messageId)}>Delete</Button>
         }
     ]
 
     return (
         <Table
-            dataSource={props.messages.map(o => { return { name: o.name, message: o.message, key: o.name + o.message } })}
+            dataSource={props.messages}
             columns={columns}
+            rowKey={o => o.messageId}
         />
     )
 }
