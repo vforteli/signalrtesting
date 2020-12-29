@@ -7,12 +7,12 @@ import Layout, { Content } from 'antd/lib/layout/layout';
 import { Message } from './Components/FooTypes';
 import AppHeader from './Components/Header/Header';
 import { useDispatch } from 'react-redux';
-import { clearMessages, deleteMessage, messageReceived } from './store/foo/fooSlice';
+import { clearMessages, messageDeleted, messageReceived } from './store/foo/fooSlice';
 
 function App() {
-  const [hubConnection, setHubConnection] = useState<signalR.HubConnection | null>(null)
-  const { isAuthenticated, getAccessTokenSilently } = useAuth0()
-  const dispatch = useDispatch()
+  const [hubConnection, setHubConnection] = useState<signalR.HubConnection | null>(null);
+  const { isAuthenticated, getAccessTokenSilently } = useAuth0();
+  const dispatch = useDispatch();
 
   // todo move all this into app global slice or similar
   useEffect(() => {
@@ -20,7 +20,7 @@ function App() {
       const connection: signalR.HubConnection = new signalR.HubConnectionBuilder().withUrl("https://localhost:5001/hubs/test", { accessTokenFactory: getAccessTokenSilently }).build();
 
       connection.on("broadcastMessage", (message: Message) => dispatch(messageReceived(message)))
-      connection.on("deleteMessage", (messageId: string) => dispatch(deleteMessage(messageId)))
+      connection.on("deleteMessage", (messageId: string) => dispatch(messageDeleted(messageId)))
       connection.on("clearMessages", () => dispatch(clearMessages()))
 
       connection.start().catch(err => console.error(err))

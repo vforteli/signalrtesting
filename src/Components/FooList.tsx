@@ -1,14 +1,14 @@
 import React, { } from "react"
 import { Table, Button } from 'antd'
 import { Message } from "./FooTypes"
-import { useSelector } from "react-redux"
+import { useDispatch, useSelector } from "react-redux"
 import { RootState } from ".."
+import { deleteMessage } from "../store/foo/fooSlice"
 
 
 function FooList() {
-    const messages = useSelector((state: RootState) => state.messages)
-
-    const handleDelete = async (messageId: string) => await fetch(`https://localhost:5001/api/messages/${messageId}`, { method: 'DELETE' });
+    const messages = useSelector((state: RootState) => state.messages);
+    const dispatch = useDispatch();
 
     const columns = [
         {
@@ -29,7 +29,7 @@ function FooList() {
         {
             title: "action",
             dataIndex: "action",
-            render: (text: any, record: Message) => <Button onClick={() => handleDelete(record.messageId)}>Delete</Button>
+            render: (text: any, record: Message) => <Button onClick={() => dispatch(deleteMessage(record.messageId))}> Delete</Button >
         }
     ]
 

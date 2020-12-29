@@ -16,7 +16,7 @@ function Foo(props: FooProps) {
 
     useEffect(() => {
         dispatch(fetchPreviousMessages())
-    }, []);     // todo add isauthenticated etc
+    }, [dispatch]);     // todo add isauthenticated etc
 
     return (
         <Content>

@@ -23,11 +23,24 @@ namespace backend.Controllers
         }
 
 
+
+        [HttpPost("api/messages")]
+        public async Task<IActionResult> PostMessage([FromBody] string message)
+        {
+            var item = new MessageModel(HttpContext?.User?.Identity?.Name!, Guid.NewGuid(), message, DateTime.UtcNow);  // todo this wont work before access token is sent and authenticated
+            _messageService.Messages.TryAdd(item.MessageId, item);
+            await _hubContext.Clients.All.SendAsync("broadcastMessage", item);
+
+            return Accepted(item);
+        }
+
+
         [HttpDelete("api/messages/{messageId}")]
         public async Task<IActionResult> DeleteMessage([FromRoute] Guid messageId)
         {
             _messageService.Messages.TryRemove(messageId, out _);
             await _hubContext.Clients.All.SendAsync("deleteMessage", messageId);
+
             return Accepted();
         }
 
@@ -37,6 +50,7 @@ namespace backend.Controllers
         {
             _messageService.Messages.Clear();
             await _hubContext.Clients.All.SendAsync("clearMessages");
+
             return Accepted();
         }
 

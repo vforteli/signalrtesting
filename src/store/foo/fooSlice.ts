@@ -16,6 +16,13 @@ export const sendMessage = createAsyncThunk('foo/sendMessage',
   }
 )
 
+export const deleteMessage = createAsyncThunk('foo/deleteMessage',
+  async (messageId: string) => {
+    const response = await fetch(`https://localhost:5001/api/messages/${messageId}`, { method: 'DELETE' });
+    return response.status
+  }
+)
+
 const fooSlice = createSlice({
   name: 'foos',
   initialState: [] as Message[],
@@ -23,7 +30,7 @@ const fooSlice = createSlice({
     messageReceived(state, action: PayloadAction<Message>) {
       state.push(action.payload)
     },
-    deleteMessage(state, action: PayloadAction<string>) {
+    messageDeleted(state, action: PayloadAction<string>) {
       return state.filter(o => o.messageId !== action.payload)
     },
     clearMessages(state, action: PayloadAction) {
@@ -33,17 +40,33 @@ const fooSlice = createSlice({
       state = action.payload
     }
   },
-  extraReducers: {
-    [fetchPreviousMessages.pending.toString()]: (state, action) => {
+  extraReducers: (builder) => {
+    builder.addCase(fetchPreviousMessages.pending, (state) => {
       console.debug('fetching previous messages pending');
-    },
-    [fetchPreviousMessages.fulfilled.toString()]: (state, action) => {
+    });
+    builder.addCase(fetchPreviousMessages.fulfilled, (state, action) => {
       console.debug('fetching previous messages fulfilled');
       return action.payload;
-    }
+    });
+
+    builder.addCase(deleteMessage.pending, (state) => {
+      console.debug('deleteMessage pending');
+    });
+    builder.addCase(deleteMessage.fulfilled, (state, action) => {
+      console.debug('deleteMessage fulfilled');
+      // todo this could actually optimistically remove the message, but now it will just wait for signalr to send the messageDeleted event
+    });
+    builder.addCase(deleteMessage.rejected, (state, action) => {
+      console.debug('deleteMessage rejected');
+      console.debug(action.error)
+    });
   }
 })
 
-export const { messageReceived, clearMessages, deleteMessage, getMessages } = fooSlice.actions
+export const {
+  messageReceived,
+  clearMessages,
+  messageDeleted,
+  getMessages } = fooSlice.actions
 
 export default fooSlice.reducer
