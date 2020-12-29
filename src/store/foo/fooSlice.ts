@@ -42,18 +42,21 @@ const fooSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder.addCase(fetchPreviousMessages.pending, (state) => {
-      console.debug('fetching previous messages pending');
+      console.debug('fetchPreviousMessages pending');
     });
     builder.addCase(fetchPreviousMessages.fulfilled, (state, action) => {
-      console.debug('fetching previous messages fulfilled');
+      console.debug('fetchPreviousMessages fulfilled');
       return action.payload;
+    });
+    builder.addCase(fetchPreviousMessages.rejected, (state, action) => {
+      console.debug('fetchPreviousMessages reject');
+      console.debug(action.error)
     });
 
     builder.addCase(deleteMessage.pending, (state) => {
-      console.debug('deleteMessage pending');
+      // todo this could actually optimistically remove the message, but now it will just wait for signalr to send the messageDeleted event
     });
     builder.addCase(deleteMessage.fulfilled, (state, action) => {
-      console.debug('deleteMessage fulfilled');
       // todo this could actually optimistically remove the message, but now it will just wait for signalr to send the messageDeleted event
     });
     builder.addCase(deleteMessage.rejected, (state, action) => {

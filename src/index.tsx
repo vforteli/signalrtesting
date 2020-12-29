@@ -7,11 +7,13 @@ import { Auth0Provider } from '@auth0/auth0-react';
 import { configureStore } from '@reduxjs/toolkit';
 import { Provider } from 'react-redux'
 import fooSlice from './store/foo/fooSlice';
+import signalrSlice from './store/foo/signalrSlice';
 
 
 const store = configureStore({
   reducer: {
-    messages: fooSlice
+    messages: fooSlice,
+    foohub: signalrSlice
   }
 })
 
