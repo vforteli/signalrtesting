@@ -1,5 +1,5 @@
 import { HubConnectionState } from '@microsoft/signalr';
-import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit'
+import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 
 const signalrSlice = createSlice({
     name: 'signalr',
@@ -8,12 +8,6 @@ const signalrSlice = createSlice({
         setHubConnectionState(state, action: PayloadAction<HubConnectionState>) {
             state.connectionState = action.payload;
         }
-    },
-    extraReducers: (builder) => {
-        // builder.addCase(connect.pending, (state) => {
-        //     console.debug('fetching previous messages pending');
-        // });
-
     }
 })
 

@@ -1,4 +1,5 @@
 ﻿using backend.Hubs;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
 using System;
@@ -8,7 +9,13 @@ using System.Threading.Tasks;
 
 namespace backend.Controllers
 {
-    // todo add authorize
+    public class SendMessageModel
+    {
+        public string Message { get; set; } = "";
+    }
+
+
+    [Authorize]
     [ApiController]
     public class HubController : ControllerBase
     {
@@ -25,9 +32,9 @@ namespace backend.Controllers
 
 
         [HttpPost("api/messages")]
-        public async Task<IActionResult> PostMessage([FromBody] string message)
+        public async Task<IActionResult> PostMessage([FromBody] SendMessageModel model)
         {
-            var item = new MessageModel(HttpContext?.User?.Identity?.Name!, Guid.NewGuid(), message, DateTime.UtcNow);  // todo this wont work before access token is sent and authenticated
+            var item = new MessageModel(HttpContext?.User?.Identity?.Name!, Guid.NewGuid(), model.Message, DateTime.UtcNow);
             _messageService.Messages.TryAdd(item.MessageId, item);
             await _hubContext.Clients.All.SendAsync("broadcastMessage", item);
 

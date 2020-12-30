@@ -8,12 +8,14 @@ import { configureStore } from '@reduxjs/toolkit';
 import { Provider } from 'react-redux'
 import fooSlice from './store/foo/fooSlice';
 import signalrSlice from './store/foo/signalrSlice';
+import authenticationSlice from './store/authentication/authenticationSlice';
 
 
 const store = configureStore({
   reducer: {
     messages: fooSlice,
-    foohub: signalrSlice
+    foohub: signalrSlice,
+    currentUser: authenticationSlice,
   }
 })
 
@@ -27,6 +29,7 @@ ReactDOM.render(
         clientId={process.env.REACT_APP_AUTH_CLIENT_ID ?? ''}
         redirectUri={window.location.origin}
         audience={process.env.REACT_APP_AUTH_AUDIENCE ?? ''}
+        cacheLocation='localstorage'
         scope='openid%20profile%20email'    >
         <App />
       </Auth0Provider>

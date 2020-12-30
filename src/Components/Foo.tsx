@@ -1,26 +1,25 @@
 import React, { useEffect } from "react"
-import * as signalR from "@microsoft/signalr";
 import { Content } from "antd/lib/layout/layout";
 import FooList from "./FooList";
 import FooForm from "./FooForm";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { fetchPreviousMessages } from "../store/foo/fooSlice";
+import { RootState } from "..";
 
 
-type FooProps = {
-    hub: signalR.HubConnection | null,
-}
-
-function Foo(props: FooProps) {
+function Foo() {
     const dispatch = useDispatch()
+    const isLoggedIn = useSelector((state: RootState) => state.currentUser.isLoggedIn);
 
     useEffect(() => {
-        dispatch(fetchPreviousMessages())
-    }, [dispatch]);     // todo add isauthenticated etc
+        if (isLoggedIn) {
+            dispatch(fetchPreviousMessages())
+        }
+    }, [dispatch, isLoggedIn]);
 
     return (
         <Content>
-            <FooForm hub={props.hub} />
+            <FooForm />
             <br />
             <br />
             <FooList />

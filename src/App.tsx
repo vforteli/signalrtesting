@@ -9,11 +9,22 @@ import { useDispatch } from 'react-redux';
 import { messageDeleted, messageReceived, messagesCleared } from './store/foo/fooSlice';
 import { setHubConnectionState } from './store/foo/signalrSlice';
 import { HubConnection, HubConnectionBuilder } from '@microsoft/signalr';
+import { setCurrentUser } from './store/authentication/authenticationSlice';
 
 
 function App() {
   const dispatch = useDispatch();
-  const { isAuthenticated, getAccessTokenSilently } = useAuth0();
+  const { isAuthenticated, getAccessTokenSilently, user } = useAuth0();
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      (async () => {
+        const token = await getAccessTokenSilently();
+        dispatch(setCurrentUser({ accessToken: token, isLoggedIn: isAuthenticated, username: user?.name ?? '' }))
+      })()
+    }
+  }, [isAuthenticated, getAccessTokenSilently, dispatch, user])
+
   const connection: HubConnection = new HubConnectionBuilder()
     .withAutomaticReconnect()
     .withUrl("https://localhost:5001/hubs/test", { accessTokenFactory: getAccessTokenSilently })
@@ -40,7 +51,7 @@ function App() {
       <AppHeader />
       <Content style={{ padding: '0 50px' }}>
         <div className="site-layout-content">
-          <Foo hub={connection} />
+          <Foo />
         </div>
       </Content>
     </Layout>

@@ -1,31 +1,58 @@
 import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit'
+import { RootState } from '../..';
 import { Message } from '../../Components/FooTypes'
 
-
+// todo refactor this, not exactly dry
 export const fetchPreviousMessages = createAsyncThunk<Message[]>('foo/fetchPreviousMessages',
-  async () => {
-    const response = await fetch('https://localhost:5001/api/messages');
+  async (_, { getState }) => {
+    const state = getState() as RootState
+    const response = await fetch('https://localhost:5001/api/messages', {
+      headers: {
+        'Authorization': `Bearer ${state.currentUser.accessToken}`
+      }
+    });
+
     return await response.json();
   }
 )
 
 export const sendMessage = createAsyncThunk('foo/sendMessage',
-  async (message: string) => {
-    // const response = await fetch('https://localhost:5001/api/messages');
-    // return await response.json();
+  async (message: string, { getState }) => {
+    const state = getState() as RootState
+    const response = await fetch('https://localhost:5001/api/messages', {
+      body: JSON.stringify({ message: message }),
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${state.currentUser.accessToken}`
+      }
+    });
+    return await response.json();
   }
 )
 
 export const deleteMessage = createAsyncThunk('foo/deleteMessage',
-  async (messageId: string) => {
-    const response = await fetch(`https://localhost:5001/api/messages/${messageId}`, { method: 'DELETE' });
+  async (messageId: string, { getState }) => {
+    const state = getState() as RootState
+    const response = await fetch(`https://localhost:5001/api/messages/${messageId}`, {
+      method: 'DELETE',
+      headers: {
+        'Authorization': `Bearer ${state.currentUser.accessToken}`
+      }
+    });
     return response.status
   }
 )
 
 export const clearMessages = createAsyncThunk('foo/clearMessages',
-  async () => {
-    const response = await fetch(`https://localhost:5001/api/messages/clear`, { method: 'DELETE' })
+  async (_, { getState }) => {
+    const state = getState() as RootState
+    const response = await fetch(`https://localhost:5001/api/messages/clear`, {
+      method: 'DELETE',
+      headers: {
+        'Authorization': `Bearer ${state.currentUser.accessToken}`
+      }
+    })
     return response.status
   }
 )
