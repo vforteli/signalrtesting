@@ -15,6 +15,7 @@ function FooForm(props: FooFormProps) {
     const dispatch = useDispatch();
     const [message, setMessage] = useState('');
     const hubState = useSelector((state: RootState) => state.foohub.connectionState);
+    const clearLoading = useSelector((state: RootState) => state.messages.clearMessagesLoading);
 
     const handleSendMessage = async () => {
         dispatch(sendMessage(message))
@@ -36,7 +37,7 @@ function FooForm(props: FooFormProps) {
     return (
         <>
             <Input type="text" disabled={hubState !== HubConnectionState.Connected} onChange={(e) => setMessage(e.target.value)} value={message} onKeyDown={e => handleKeyPress(e)}></Input> <Button onClick={() => handleSendMessage()} disabled={hubState !== HubConnectionState.Connected}>Send</Button>
-            <Button onClick={() => dispatch(clearMessages())} disabled={hubState !== HubConnectionState.Connected}>Clear all</Button>
+            <Button onClick={() => dispatch(clearMessages())} disabled={hubState !== HubConnectionState.Connected || clearLoading} loading={clearLoading}>Clear all</Button>
         </>
     )
 }

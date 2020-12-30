@@ -2,7 +2,7 @@ import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit'
 import { Message } from '../../Components/FooTypes'
 
 
-export const fetchPreviousMessages = createAsyncThunk('foo/fetchPreviousMessages',
+export const fetchPreviousMessages = createAsyncThunk<Message[]>('foo/fetchPreviousMessages',
   async () => {
     const response = await fetch('https://localhost:5001/api/messages');
     return await response.json();
@@ -32,19 +32,22 @@ export const clearMessages = createAsyncThunk('foo/clearMessages',
 
 const fooSlice = createSlice({
   name: 'foos',
-  initialState: [] as Message[],
+  initialState: {
+    items: [] as Message[],
+    clearMessagesLoading: false,
+  },
   reducers: {
     messageReceived(state, action: PayloadAction<Message>) {
-      state.push(action.payload)
+      state.items.push(action.payload);
     },
     messageDeleted(state, action: PayloadAction<string>) {
-      return state.filter(o => o.messageId !== action.payload)
+      state.items = state.items.filter(o => o.messageId !== action.payload);
     },
     messagesCleared(state, action: PayloadAction) {
-      return []
+      state.items = [];
     },
     getMessages(state, action: PayloadAction<Message[]>) {
-      state = action.payload
+      state.items = action.payload
     }
   },
   extraReducers: (builder) => {
@@ -53,7 +56,7 @@ const fooSlice = createSlice({
     });
     builder.addCase(fetchPreviousMessages.fulfilled, (state, action) => {
       console.debug('fetchPreviousMessages fulfilled');
-      return action.payload;
+      state.items = action.payload;
     });
     builder.addCase(fetchPreviousMessages.rejected, (state, action) => {
       console.debug('fetchPreviousMessages reject');
@@ -72,10 +75,15 @@ const fooSlice = createSlice({
     });
 
     builder.addCase(clearMessages.pending, state => {
-      console.debug('clearmessages pending');
+      state.clearMessagesLoading = true;
     });
     builder.addCase(clearMessages.fulfilled, state => {
-      console.debug('clearmessages fulfilled');
+      state.clearMessagesLoading = false;
+    })
+    builder.addCase(clearMessages.rejected, (state, action) => {
+      state.clearMessagesLoading = false;
+      console.debug('clearmessages rejected');
+      console.debug(action.error)
     })
   }
 })
