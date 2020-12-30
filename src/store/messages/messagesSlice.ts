@@ -61,6 +61,7 @@ const fooSlice = createSlice({
   name: 'foos',
   initialState: {
     items: [] as Message[],
+    messagesLoading: false,
     clearMessagesLoading: false,
   },
   reducers: {
@@ -79,14 +80,14 @@ const fooSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder.addCase(fetchPreviousMessages.pending, (state) => {
-      console.debug('fetchPreviousMessages pending');
+      state.messagesLoading = true;
     });
     builder.addCase(fetchPreviousMessages.fulfilled, (state, action) => {
-      console.debug('fetchPreviousMessages fulfilled');
+      state.messagesLoading = false;
       state.items = action.payload;
     });
     builder.addCase(fetchPreviousMessages.rejected, (state, action) => {
-      console.debug('fetchPreviousMessages reject');
+      state.messagesLoading = false;
       console.debug(action.error)
     });
 
@@ -97,7 +98,6 @@ const fooSlice = createSlice({
       // todo this could actually optimistically remove the message, but now it will just wait for signalr to send the messageDeleted event
     });
     builder.addCase(deleteMessage.rejected, (state, action) => {
-      console.debug('deleteMessage rejected');
       console.debug(action.error)
     });
 
@@ -109,7 +109,6 @@ const fooSlice = createSlice({
     })
     builder.addCase(clearMessages.rejected, (state, action) => {
       state.clearMessagesLoading = false;
-      console.debug('clearmessages rejected');
       console.debug(action.error)
     })
   }

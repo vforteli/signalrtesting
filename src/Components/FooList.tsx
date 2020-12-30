@@ -7,7 +7,7 @@ import { deleteMessage } from "../store/messages/messagesSlice"
 
 
 function FooList() {
-    const messages = useSelector((state: RootState) => state.messages.items);
+    const { items, messagesLoading } = useSelector((state: RootState) => state.messages);
     const dispatch = useDispatch();
 
     const columns = [
@@ -35,7 +35,8 @@ function FooList() {
 
     return (
         <Table
-            dataSource={messages}
+            loading={messagesLoading}
+            dataSource={items}
             columns={columns}
             rowKey={o => o.messageId}
         />
