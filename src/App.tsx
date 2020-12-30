@@ -6,8 +6,8 @@ import Layout, { Content } from 'antd/lib/layout/layout';
 import { Message } from './Components/FooTypes';
 import AppHeader from './Components/Header/Header';
 import { useDispatch } from 'react-redux';
-import { messageDeleted, messageReceived, messagesCleared } from './store/foo/fooSlice';
-import { setHubConnectionState } from './store/foo/signalrSlice';
+import { messageDeleted, messageReceived, messagesCleared } from './store/messages/messagesSlice';
+import { setHubConnectionState } from './store/messages/signalrSlice';
 import { HubConnection, HubConnectionBuilder } from '@microsoft/signalr';
 import { setCurrentUser } from './store/authentication/authenticationSlice';
 

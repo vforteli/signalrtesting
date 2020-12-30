@@ -6,8 +6,8 @@ import reportWebVitals from './reportWebVitals';
 import { Auth0Provider } from '@auth0/auth0-react';
 import { configureStore } from '@reduxjs/toolkit';
 import { Provider } from 'react-redux'
-import fooSlice from './store/foo/fooSlice';
-import signalrSlice from './store/foo/signalrSlice';
+import fooSlice from './store/messages/messagesSlice';
+import signalrSlice from './store/messages/signalrSlice';
 import authenticationSlice from './store/authentication/authenticationSlice';
 
 

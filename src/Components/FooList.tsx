@@ -3,7 +3,7 @@ import { Table, Button } from 'antd'
 import { Message } from "./FooTypes"
 import { useDispatch, useSelector } from "react-redux"
 import { RootState } from ".."
-import { deleteMessage } from "../store/foo/fooSlice"
+import { deleteMessage } from "../store/messages/messagesSlice"
 
 
 function FooList() {

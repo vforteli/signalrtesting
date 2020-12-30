@@ -1,7 +1,7 @@
 import React, { useState } from "react"
 import { Button, Input } from 'antd'
 import { useDispatch, useSelector } from "react-redux";
-import { clearMessages, sendMessage } from "../store/foo/fooSlice";
+import { clearMessages, sendMessage } from "../store/messages/messagesSlice";
 import { RootState } from "..";
 import { HubConnectionState } from "@microsoft/signalr";
 

@@ -3,7 +3,7 @@ import { Content } from "antd/lib/layout/layout";
 import FooList from "./FooList";
 import FooForm from "./FooForm";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchPreviousMessages } from "../store/foo/fooSlice";
+import { fetchPreviousMessages } from "../store/messages/messagesSlice";
 import { RootState } from "..";
 
 
