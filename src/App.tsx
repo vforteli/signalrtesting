@@ -10,6 +10,7 @@ import { messageDeleted, messageReceived, messagesCleared } from './store/messag
 import { setHubConnectionState } from './store/messages/signalrSlice';
 import { HubConnection, HubConnectionBuilder } from '@microsoft/signalr';
 import { setCurrentUser } from './store/authentication/authenticationSlice';
+import { Affix } from 'antd';
 
 
 function App() {
@@ -47,8 +48,10 @@ function App() {
   }, [connection, isAuthenticated, dispatch])
 
   return (
-    <Layout className="layout">
-      <AppHeader />
+    <Layout className="layout" style={{ minHeight: "100vh" }}>
+      <Affix offsetTop={0}>
+        <AppHeader />
+      </Affix>
       <Content style={{ padding: '0 50px' }}>
         <div className="site-layout-content">
           <Foo />
