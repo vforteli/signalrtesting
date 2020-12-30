@@ -6,7 +6,7 @@ import Layout, { Content } from 'antd/lib/layout/layout';
 import { Message } from './Components/FooTypes';
 import AppHeader from './Components/Header/Header';
 import { useDispatch } from 'react-redux';
-import { clearMessages, messageDeleted, messageReceived } from './store/foo/fooSlice';
+import { messageDeleted, messageReceived, messagesCleared } from './store/foo/fooSlice';
 import { setHubConnectionState } from './store/foo/signalrSlice';
 import { HubConnection, HubConnectionBuilder } from '@microsoft/signalr';
 
@@ -19,9 +19,9 @@ function App() {
     .withUrl("https://localhost:5001/hubs/test", { accessTokenFactory: getAccessTokenSilently })
     .build();
 
-  connection.on("broadcastMessage", (message: Message) => dispatch(messageReceived(message)))
-  connection.on("deleteMessage", (messageId: string) => dispatch(messageDeleted(messageId)))
-  connection.on("clearMessages", () => dispatch(clearMessages()))
+  connection.on("broadcastMessage", (message: Message) => dispatch(messageReceived(message)));
+  connection.on("deleteMessage", (messageId: string) => dispatch(messageDeleted(messageId)));
+  connection.on("clearMessages", () => dispatch(messagesCleared()));
   connection.onreconnecting(() => dispatch(setHubConnectionState(connection.state)));
   connection.onreconnected(() => dispatch(setHubConnectionState(connection.state)));
 
@@ -33,7 +33,7 @@ function App() {
         connection.stop()
       }
     }
-  }, [isAuthenticated, dispatch])
+  }, [connection, isAuthenticated, dispatch])
 
   return (
     <Layout className="layout">

@@ -23,6 +23,13 @@ export const deleteMessage = createAsyncThunk('foo/deleteMessage',
   }
 )
 
+export const clearMessages = createAsyncThunk('foo/clearMessages',
+  async () => {
+    const response = await fetch(`https://localhost:5001/api/messages/clear`, { method: 'DELETE' })
+    return response.status
+  }
+)
+
 const fooSlice = createSlice({
   name: 'foos',
   initialState: [] as Message[],
@@ -33,7 +40,7 @@ const fooSlice = createSlice({
     messageDeleted(state, action: PayloadAction<string>) {
       return state.filter(o => o.messageId !== action.payload)
     },
-    clearMessages(state, action: PayloadAction) {
+    messagesCleared(state, action: PayloadAction) {
       return []
     },
     getMessages(state, action: PayloadAction<Message[]>) {
@@ -63,12 +70,19 @@ const fooSlice = createSlice({
       console.debug('deleteMessage rejected');
       console.debug(action.error)
     });
+
+    builder.addCase(clearMessages.pending, state => {
+      console.debug('clearmessages pending');
+    });
+    builder.addCase(clearMessages.fulfilled, state => {
+      console.debug('clearmessages fulfilled');
+    })
   }
 })
 
 export const {
   messageReceived,
-  clearMessages,
+  messagesCleared,
   messageDeleted,
   getMessages } = fooSlice.actions
 

@@ -48,6 +48,7 @@ namespace backend.Controllers
         [HttpDelete("api/messages/clear/")]
         public async Task<IActionResult> ClearMessage()
         {
+            await Task.Delay(500); // simulate some lag
             _messageService.Messages.Clear();
             await _hubContext.Clients.All.SendAsync("clearMessages");
 
