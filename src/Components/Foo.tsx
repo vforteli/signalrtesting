@@ -13,7 +13,7 @@ function Foo() {
 
     useEffect(() => {
         if (isLoggedIn) {
-            dispatch(fetchPreviousMessages())
+            dispatch(fetchPreviousMessages());
         }
     }, [dispatch, isLoggedIn]);
 

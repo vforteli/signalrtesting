@@ -8,7 +8,7 @@ import AppHeader from './Components/Header/Header';
 import { useDispatch } from 'react-redux';
 import { messageDeleted, messageReceived, messagesCleared } from './store/messages/messagesSlice';
 import { setHubConnectionState } from './store/messages/signalrSlice';
-import { HubConnection, HubConnectionBuilder } from '@microsoft/signalr';
+import { HubConnection, HubConnectionBuilder, HubConnectionState } from '@microsoft/signalr';
 import { setCurrentUser } from './store/authentication/authenticationSlice';
 import { Affix } from 'antd';
 
@@ -17,18 +17,9 @@ function App() {
   const dispatch = useDispatch();
   const { isAuthenticated, getAccessTokenSilently, user } = useAuth0();
 
-  useEffect(() => {
-    if (isAuthenticated) {
-      (async () => {
-        const token = await getAccessTokenSilently();
-        dispatch(setCurrentUser({ accessToken: token, isLoggedIn: isAuthenticated, username: user?.name ?? '' }))
-      })()
-    }
-  }, [isAuthenticated, getAccessTokenSilently, dispatch, user])
-
   const connection: HubConnection = new HubConnectionBuilder()
     .withAutomaticReconnect()
-    .withUrl("https://localhost:5001/hubs/test", { accessTokenFactory: getAccessTokenSilently })
+    .withUrl(process.env.REACT_APP_SIGNALR_HUB_URL ?? '', { accessTokenFactory: getAccessTokenSilently })
     .build();
 
   connection.on("broadcastMessage", (message: Message) => dispatch(messageReceived(message)));
@@ -39,13 +30,20 @@ function App() {
 
   useEffect(() => {
     if (isAuthenticated) {
-      connection.start().then(() => dispatch(setHubConnectionState(connection.state))).catch(err => console.error(err))
+      (async () => {
+        const token = await getAccessTokenSilently();
+        dispatch(setCurrentUser({ accessToken: token, isLoggedIn: isAuthenticated, username: user?.name ?? '' }))
+      })();
+
+      connection.start().then(() => dispatch(setHubConnectionState(connection.state))).catch(err => console.error(err));
 
       return () => {
-        connection.stop()
+        if (connection && connection.state !== HubConnectionState.Disconnected) {
+          connection.stop();
+        }
       }
     }
-  }, [connection, isAuthenticated, dispatch])
+  }, [connection, isAuthenticated, getAccessTokenSilently, dispatch, user])
 
   return (
     <Layout className="layout" style={{ minHeight: "100vh" }}>

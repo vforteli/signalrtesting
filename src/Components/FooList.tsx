@@ -44,19 +44,3 @@ function FooList() {
 }
 
 export default React.memo(FooList)
-
-/* <table>
-    <TransitionGroup className="todo-list" component="tbody">
-
-
-        {props.messages.map(o => (
-            <CSSTransition
-                key={o.name + o.message}
-                timeout={500}
-                classNames="fade"
-            >
-                <tr><td>{o.name}</td><td>{o.message}</td><td><Button onClick={() => handleDelete(o.name + o.message)}>Delete</Button></td></tr>
-            </CSSTransition>
-        ))}
-    </TransitionGroup>
-</table> */

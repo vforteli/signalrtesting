@@ -1,4 +1,4 @@
-import { createSlice, PayloadAction } from '@reduxjs/toolkit'
+import { Action, createSlice, PayloadAction } from '@reduxjs/toolkit'
 
 
 export interface IAuthenticationState {
@@ -19,12 +19,15 @@ const authenticationSlice = createSlice({
         setCurrentUser(state, action: PayloadAction<IAuthenticationState>) {
             return action.payload;
         },
-        clearCurrentUser(state, action: PayloadAction) {
+        clearCurrentUser(state, action: Action) {
             return { username: '', isLoggedIn: false, accessToken: '' };
         }
     }
 })
 
-export const { setCurrentUser } = authenticationSlice.actions
+export const {
+    setCurrentUser,
+    clearCurrentUser
+} = authenticationSlice.actions
 
 export default authenticationSlice.reducer

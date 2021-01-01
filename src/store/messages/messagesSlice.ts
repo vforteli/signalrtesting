@@ -40,7 +40,8 @@ export const deleteMessage = createAsyncThunk('foo/deleteMessage',
         'Authorization': `Bearer ${state.currentUser.accessToken}`
       }
     });
-    return response.status
+
+    return await response.json() as Message
   }
 )
 
@@ -92,10 +93,10 @@ const fooSlice = createSlice({
     });
 
     builder.addCase(deleteMessage.pending, (state) => {
-      // todo this could actually optimistically remove the message, but now it will just wait for signalr to send the messageDeleted event
+      // loading?
     });
     builder.addCase(deleteMessage.fulfilled, (state, action) => {
-      // todo this could actually optimistically remove the message, but now it will just wait for signalr to send the messageDeleted event
+      state.items = state.items.filter(o => o.messageId !== action.payload.messageId);
     });
     builder.addCase(deleteMessage.rejected, (state, action) => {
       console.debug(action.error)
