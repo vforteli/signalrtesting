@@ -1,17 +1,11 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using backend.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.SignalR;
 using System;
 using System.Threading.Tasks;
 
 namespace backend.Hubs
 {
-    public record MessageModel(
-        string Name,
-        Guid MessageId,
-        string Message,
-        DateTime TimeSent);
-
-
     [Authorize]
     public class TestHub : Hub
     {
@@ -27,8 +21,6 @@ namespace backend.Hubs
             var item = new MessageModel(Context?.User?.Identity?.Name!, Guid.NewGuid(), message, DateTime.UtcNow);
 
             _messageService.Messages.TryAdd(item.MessageId, item);
-
-            // todo maybe send to all except caller            
             return Clients.All.SendAsync("broadcastMessage", item);
         }
 

@@ -1,4 +1,5 @@
 ﻿using backend.Hubs;
+using backend.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
@@ -9,12 +10,6 @@ using System.Threading.Tasks;
 
 namespace backend.Controllers
 {
-    public class SendMessageModel
-    {
-        public string Message { get; set; } = "";
-    }
-
-
     [Authorize]
     [ApiController]
     public class HubController : ControllerBase
@@ -58,7 +53,7 @@ namespace backend.Controllers
         [HttpDelete("api/messages/clear/")]
         public async Task<IActionResult> ClearMessage()
         {
-            await Task.Delay(500); // simulate some lag
+            await Task.Delay(700); // simulate some lag
             _messageService.Messages.Clear();
             await _hubContext.Clients.All.SendAsync("clearMessages");
 

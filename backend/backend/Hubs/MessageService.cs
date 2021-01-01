@@ -1,4 +1,5 @@
-﻿using System;
+﻿using backend.Models;
+using System;
 using System.Collections.Concurrent;
 
 namespace backend.Hubs
