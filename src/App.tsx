@@ -6,11 +6,12 @@ import Layout, { Content } from 'antd/lib/layout/layout';
 import { Message } from './Components/FooTypes';
 import AppHeader from './Components/Header/Header';
 import { useDispatch } from 'react-redux';
-import { messageDeleted, messageReceived, messagesCleared } from './store/messages/messagesSlice';
+import { fetchPreviousMessages, messageDeleted, messageReceived, messagesCleared } from './store/messages/messagesSlice';
 import { setHubConnectionState } from './store/messages/signalrSlice';
 import { HubConnection, HubConnectionBuilder, HubConnectionState } from '@microsoft/signalr';
 import { setCurrentUser } from './store/authentication/authenticationSlice';
-import { Affix } from 'antd';
+import { Affix, message } from 'antd';
+import HubNotificationMessage from './Components/HubNotificationMessage';
 
 
 function App() {
@@ -26,7 +27,10 @@ function App() {
   connection.on("deleteMessage", (messageId: string) => dispatch(messageDeleted(messageId)));
   connection.on("clearMessages", () => dispatch(messagesCleared()));
   connection.onreconnecting(() => dispatch(setHubConnectionState(connection.state)));
-  connection.onreconnected(() => dispatch(setHubConnectionState(connection.state)));
+  connection.onreconnected(() => {
+    dispatch(setHubConnectionState(connection.state));
+    dispatch(fetchPreviousMessages());
+  });
 
   useEffect(() => {
     if (isAuthenticated) {
@@ -35,6 +39,7 @@ function App() {
         dispatch(setCurrentUser({ accessToken: token, isLoggedIn: isAuthenticated, username: user?.name ?? '' }))
       })();
 
+      dispatch(setHubConnectionState(HubConnectionState.Connecting));
       connection.start().then(() => dispatch(setHubConnectionState(connection.state))).catch(err => console.error(err));
 
       return () => {
@@ -47,6 +52,7 @@ function App() {
 
   return (
     <Layout className="layout" style={{ minHeight: "100vh" }}>
+      <HubNotificationMessage />
       <Affix offsetTop={0}>
         <AppHeader />
       </Affix>

@@ -1,13 +1,15 @@
-import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit'
+import { Action, createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { RootState } from '../..';
-import { Message } from '../../Components/FooTypes'
+import { Message } from '../../Components/FooTypes';
 
 // todo refactor this, not exactly dry
 export const fetchPreviousMessages = createAsyncThunk<Message[]>('foo/fetchPreviousMessages',
   async (_, { getState }) => {
     const state = getState() as RootState
-    const response = await fetch('https://localhost:5001/api/messages', {
+    const fromDateQuery = state.messages.items.length > 0 ? `fromDate=${state.messages.items[-1].timeSent}` : '';
+    const response = await fetch(`https://localhost:5001/api/messages?${fromDateQuery}`, {
       headers: {
+        'Content-Type': 'application/json',
         'Authorization': `Bearer ${state.currentUser.accessToken}`
       }
     });
@@ -37,6 +39,7 @@ export const deleteMessage = createAsyncThunk('foo/deleteMessage',
     const response = await fetch(`https://localhost:5001/api/messages/${messageId}`, {
       method: 'DELETE',
       headers: {
+        'Content-Type': 'application/json',
         'Authorization': `Bearer ${state.currentUser.accessToken}`
       }
     });
@@ -51,6 +54,7 @@ export const clearMessages = createAsyncThunk('foo/clearMessages',
     const response = await fetch(`https://localhost:5001/api/messages/clear`, {
       method: 'DELETE',
       headers: {
+        'Content-Type': 'application/json',
         'Authorization': `Bearer ${state.currentUser.accessToken}`
       }
     })
@@ -72,7 +76,7 @@ const fooSlice = createSlice({
     messageDeleted(state, action: PayloadAction<string>) {
       state.items = state.items.filter(o => o.messageId !== action.payload);
     },
-    messagesCleared(state, action: PayloadAction) {
+    messagesCleared(state, action: Action) {
       state.items = [];
     },
     getMessages(state, action: PayloadAction<Message[]>) {
@@ -85,12 +89,13 @@ const fooSlice = createSlice({
     });
     builder.addCase(fetchPreviousMessages.fulfilled, (state, action) => {
       state.messagesLoading = false;
-      state.items = action.payload;
+      state.items = state.items.concat(action.payload);
     });
     builder.addCase(fetchPreviousMessages.rejected, (state, action) => {
       state.messagesLoading = false;
       console.debug(action.error)
     });
+
 
     builder.addCase(deleteMessage.pending, (state) => {
       // loading?
@@ -101,6 +106,7 @@ const fooSlice = createSlice({
     builder.addCase(deleteMessage.rejected, (state, action) => {
       console.debug(action.error)
     });
+
 
     builder.addCase(clearMessages.pending, state => {
       state.clearMessagesLoading = true;

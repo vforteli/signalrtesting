@@ -61,7 +61,15 @@ namespace backend.Controllers
         }
 
         [HttpGet("api/messages")]
-        public ActionResult<IEnumerable<MessageModel>> Messages() =>
-            _messageService.Messages.Select(o => o.Value).OrderBy(o => o.TimeSent).ToList();
+        public ActionResult<IEnumerable<MessageModel>> Messages([FromQuery] DateTime? fromDate)
+        {
+            var messages = _messageService.Messages.Select(o => o.Value);
+            if (fromDate.HasValue)
+            {
+                messages = messages.Where(o => o.TimeSent > fromDate);
+            }
+
+            return messages.OrderBy(o => o.TimeSent).ToList();
+        }
     }
 }

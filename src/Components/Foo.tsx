@@ -5,6 +5,7 @@ import FooForm from "./FooForm";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchPreviousMessages } from "../store/messages/messagesSlice";
 import { RootState } from "..";
+import { Affix } from "antd";
 
 
 function Foo() {
@@ -19,7 +20,9 @@ function Foo() {
 
     return (
         <Content>
-            <FooForm />
+            <Affix offsetTop={64}>
+                <FooForm />
+            </Affix>
             <br />
             <br />
             <FooList />
