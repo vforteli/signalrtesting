@@ -4,11 +4,12 @@ import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 import { Auth0Provider } from '@auth0/auth0-react';
-import { configureStore } from '@reduxjs/toolkit';
+import { configureStore, getDefaultMiddleware } from '@reduxjs/toolkit';
 import { Provider } from 'react-redux'
 import fooSlice from './store/messages/messagesSlice';
 import signalrSlice from './store/messages/signalrSlice';
 import authenticationSlice from './store/authentication/authenticationSlice';
+import logger from 'redux-logger'
 
 
 const store = configureStore({
@@ -16,7 +17,8 @@ const store = configureStore({
     messages: fooSlice,
     foohub: signalrSlice,
     currentUser: authenticationSlice,
-  }
+  },
+  middleware: [logger, ...getDefaultMiddleware()],
 })
 
 export type RootState = ReturnType<typeof store.getState>;

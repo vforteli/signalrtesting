@@ -10,7 +10,7 @@ import { fetchPreviousMessages, messageDeleted, messageReceived, messagesCleared
 import { setHubConnectionState } from './store/messages/signalrSlice';
 import { HubConnection, HubConnectionBuilder, HubConnectionState } from '@microsoft/signalr';
 import { setCurrentUser } from './store/authentication/authenticationSlice';
-import { Affix, message } from 'antd';
+import { Affix } from 'antd';
 import HubNotificationMessage from './Components/HubNotificationMessage';
 
 
