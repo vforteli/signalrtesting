@@ -3,10 +3,11 @@ import { RootState } from '../..';
 import { Message } from '../../Components/FooTypes';
 
 // todo refactor this, not exactly dry
-export const fetchPreviousMessages = createAsyncThunk<Message[]>('foo/fetchPreviousMessages',
+export const fetchPreviousMessages = createAsyncThunk<Message[]>(
+  'foo/fetchPreviousMessages',
   async (_, { getState }) => {
     const state = getState() as RootState
-    const fromDateQuery = state.messages.items.length > 0 ? `fromDate=${state.messages.items[-1].timeSent}` : '';
+    const fromDateQuery = state.messages.items.length > 0 ? `fromDate=${state.messages.items[state.messages.items.length - 1].timeSent}` : '';
     const response = await fetch(`https://localhost:5001/api/messages?${fromDateQuery}`, {
       headers: {
         'Content-Type': 'application/json',
@@ -18,7 +19,8 @@ export const fetchPreviousMessages = createAsyncThunk<Message[]>('foo/fetchPrevi
   }
 )
 
-export const sendMessage = createAsyncThunk('foo/sendMessage',
+export const sendMessage = createAsyncThunk(
+  'foo/sendMessage',
   async (message: string, { getState }) => {
     const state = getState() as RootState
     const response = await fetch('https://localhost:5001/api/messages', {
@@ -33,7 +35,8 @@ export const sendMessage = createAsyncThunk('foo/sendMessage',
   }
 )
 
-export const deleteMessage = createAsyncThunk('foo/deleteMessage',
+export const deleteMessage = createAsyncThunk(
+  'foo/deleteMessage',
   async (messageId: string, { getState }) => {
     const state = getState() as RootState
     const response = await fetch(`https://localhost:5001/api/messages/${messageId}`, {
@@ -48,7 +51,8 @@ export const deleteMessage = createAsyncThunk('foo/deleteMessage',
   }
 )
 
-export const clearMessages = createAsyncThunk('foo/clearMessages',
+export const clearMessages = createAsyncThunk(
+  'foo/clearMessages',
   async (_, { getState }) => {
     const state = getState() as RootState
     const response = await fetch(`https://localhost:5001/api/messages/clear`, {
