@@ -1,13 +1,23 @@
 using backend.Hubs;
+using Microsoft.AspNetCore.Antiforgery;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.FileProviders.Physical;
 using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using System;
+using System.IO;
+using System.Linq;
 using System.Security.Claims;
+using System.Security.Cryptography;
 
 namespace backend
 {
@@ -67,10 +77,62 @@ namespace backend
 
             app.UseAuthorization();
 
+            app.UseStaticFiles();
+
+            app.Use(async (context, next) =>
+            {
+                var safeMethods = new[] { "GET", "OPTION", "TRACE", "HEAD" };
+                if (!safeMethods.Contains(context.Request.Method))
+                {
+                    if (context.Request.Headers.TryGetValue("X-XSRF-TOKEN", out var headerToken)
+                    && context.Request.Cookies.TryGetValue("XSRF-TOKEN", out var cookieToken))
+                    {
+                        Console.WriteLine($"Found token in header: {headerToken}");
+                        Console.WriteLine($"Found token in cookie: {cookieToken}");
+
+                        if (!string.IsNullOrEmpty(headerToken) && cookieToken == headerToken)
+                        {
+                            await next();
+                            return;
+                        }
+                    }
+
+                    Console.WriteLine("XSRF mismatch, abort abort!");
+                    context.Response.StatusCode = 400;
+                    await context.Response.WriteAsync("XSRF mismatch...");
+                    await context.Response.CompleteAsync();
+                    return;
+                }
+
+                await next();
+            });
+
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
                 endpoints.MapHub<TestHub>("/hubs/test");
+            });
+
+
+
+            using var rng = new RNGCryptoServiceProvider();
+            app.Run(async context =>
+            {
+                var cspNonceBytes = new byte[32];
+                rng.GetBytes(cspNonceBytes);
+                var cspNonce = WebEncoders.Base64UrlEncode(cspNonceBytes);
+
+                context.Response.Headers.Add("Content-Security-Policy", csp);
+                context.Response.Cookies.Append("csp-nonce", cspNonce, new CookieOptions { IsEssential = true, SameSite = SameSiteMode.Strict, Secure = true });
+
+                var csrfTokenBytes = new byte[32];
+                rng.GetBytes(csrfTokenBytes);
+                var csrfToken = WebEncoders.Base64UrlEncode(csrfTokenBytes);
+                context.Response.Cookies.Append("XSRF-TOKEN", csrfToken, new CookieOptions { IsEssential = true, SameSite = SameSiteMode.Strict, Secure = true });
+
+                context.Response.ContentType = "text/html";
+                await context.Response.SendFileAsync(new PhysicalFileInfo(new FileInfo(Path.Combine(env.WebRootPath, "index.html"))));
+                await context.Response.CompleteAsync();
             });
         }
     }

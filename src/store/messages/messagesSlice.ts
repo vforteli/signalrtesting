@@ -22,13 +22,20 @@ export const fetchPreviousMessages = createAsyncThunk<Message[]>(
 export const sendMessage = createAsyncThunk(
   'foo/sendMessage',
   async (message: string, { getState }) => {
+
+    // todo move this somewhere sensible
+    const regex = /XSRF-TOKEN=(?<csrfToken>[^;]*)/
+    const match = document.cookie.match(regex)
+    const csrfToken = match && match.groups ? match.groups.csrfToken : ''
+
     const state = getState() as RootState
     const response = await fetch('https://localhost:5001/api/messages', {
       body: JSON.stringify({ message: message }),
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${state.currentUser.accessToken}`
+        'Authorization': `Bearer ${state.currentUser.accessToken}`,
+        'X-XSRF-TOKEN': csrfToken
       }
     });
     return await response.json();
@@ -38,12 +45,19 @@ export const sendMessage = createAsyncThunk(
 export const deleteMessage = createAsyncThunk(
   'foo/deleteMessage',
   async (messageId: string, { getState }) => {
+
+    // todo move this somewhere sensible
+    const regex = /XSRF-TOKEN=(?<csrfToken>[^;]*)/
+    const match = document.cookie.match(regex)
+    const csrfToken = match && match.groups ? match.groups.csrfToken : ''
+
     const state = getState() as RootState
     const response = await fetch(`https://localhost:5001/api/messages/${messageId}`, {
       method: 'DELETE',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${state.currentUser.accessToken}`
+        'Authorization': `Bearer ${state.currentUser.accessToken}`,
+        'X-XSRF-TOKEN': csrfToken
       }
     });
 
