@@ -16,7 +16,7 @@ export default function TextAreaAutoSize(props: TextAreaProps & TextAreaAutoSize
             setLineHeight(parseFloat(window.getComputedStyle(event.currentTarget).lineHeight))
         }
 
-        event.currentTarget.rows = ~~(event.currentTarget.scrollHeight / lineHeight!)
+        event.currentTarget.rows = ~~(event.currentTarget.scrollHeight / (lineHeight! - 0.4))
 
         if (onChange) {
             onChange(event)
