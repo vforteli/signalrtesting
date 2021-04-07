@@ -41,7 +41,7 @@ namespace backend
             });
 
             services.AddSingleton<MockMessageService>();
-            services.AddSignalR().AddAzureSignalR(Configuration["SignalrConnectionString"]);
+            services.AddSignalR().AddAzureSignalR(Configuration["SignalRConnectionString"]);
             services.AddAuthentication(options =>
             {
                 options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -64,9 +64,10 @@ namespace backend
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
-                app.UseSwagger();
-                app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "backend v1"));
             }
+
+            app.UseSwagger();
+            app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "backend v1"));
 
             app.UseCors(o => o.WithOrigins("http://localhost:3000").AllowAnyMethod().AllowAnyHeader().AllowCredentials());
             app.UseHttpsRedirection();
@@ -78,6 +79,11 @@ namespace backend
             app.UseAuthorization();
 
             app.UseStaticFiles();
+
+            app.UseEndpoints(endpoints =>
+            {
+                endpoints.MapHub<TestHub>("/hubs/test");
+            });
 
             app.Use(async (context, next) =>
             {
@@ -110,7 +116,6 @@ namespace backend
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
-                endpoints.MapHub<TestHub>("/hubs/test");
             });
 
 
@@ -121,7 +126,7 @@ namespace backend
                 var cspNonceBytes = new byte[32];
                 rng.GetBytes(cspNonceBytes);
                 var cspNonce = WebEncoders.Base64UrlEncode(cspNonceBytes);
-
+                var csp = Configuration["CspPolicy"].Replace("{cspNonce}", cspNonce);
                 context.Response.Headers.Add("Content-Security-Policy", csp);
                 context.Response.Cookies.Append("csp-nonce", cspNonce, new CookieOptions { IsEssential = true, SameSite = SameSiteMode.Strict, Secure = true });
 
