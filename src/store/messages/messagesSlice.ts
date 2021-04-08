@@ -8,7 +8,7 @@ export const fetchPreviousMessages = createAsyncThunk<Message[]>(
   async (_, { getState }) => {
     const state = getState() as RootState
     const fromDateQuery = state.messages.items.length > 0 ? `fromDate=${state.messages.items[state.messages.items.length - 1].timeSent}` : '';
-    const response = await fetch(`https://localhost:5001/api/messages?${fromDateQuery}`, {
+    const response = await fetch(process.env.REACT_APP_BACKEND_URL ?? '' + `/api/messages?${fromDateQuery}`, {
       headers: {
         'Content-Type': 'application/json',
         'Authorization': `Bearer ${state.currentUser.accessToken}`
@@ -29,7 +29,7 @@ export const sendMessage = createAsyncThunk(
     const csrfToken = match && match.groups ? match.groups.csrfToken : ''
 
     const state = getState() as RootState
-    const response = await fetch('https://localhost:5001/api/messages', {
+    const response = await fetch(process.env.REACT_APP_BACKEND_URL ?? '' + '/api/messages', {
       body: JSON.stringify({ message: message }),
       method: 'POST',
       headers: {
@@ -52,7 +52,7 @@ export const deleteMessage = createAsyncThunk(
     const csrfToken = match && match.groups ? match.groups.csrfToken : ''
 
     const state = getState() as RootState
-    const response = await fetch(`https://localhost:5001/api/messages/${messageId}`, {
+    const response = await fetch(process.env.REACT_APP_BACKEND_URL ?? '' + `/api/messages/${messageId}`, {
       method: 'DELETE',
       headers: {
         'Content-Type': 'application/json',
@@ -69,7 +69,7 @@ export const clearMessages = createAsyncThunk(
   'foo/clearMessages',
   async (_, { getState }) => {
     const state = getState() as RootState
-    const response = await fetch(`https://localhost:5001/api/messages/clear`, {
+    const response = await fetch(process.env.REACT_APP_BACKEND_URL ?? '' + `/api/messages/clear`, {
       method: 'DELETE',
       headers: {
         'Content-Type': 'application/json',
