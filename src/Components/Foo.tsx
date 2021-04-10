@@ -14,6 +14,7 @@ function Foo() {
 
     useEffect(() => {
         if (isLoggedIn) {
+            // should this be called every time the page is opened? this decision depends on if the hub should be disconnected when leaving the page
             dispatch(fetchPreviousMessages());
         }
     }, [dispatch, isLoggedIn]);

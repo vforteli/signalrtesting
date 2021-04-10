@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 namespace backend.Controllers
 {
     [Authorize]
-    [ApiController]
+    [ApiController]    
     public class HubController : ControllerBase
     {
         private readonly IHubContext<TestHub> _hubContext;

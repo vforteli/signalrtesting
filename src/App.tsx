@@ -12,6 +12,10 @@ import { HubConnection, HubConnectionBuilder, HubConnectionState } from '@micros
 import { setCurrentUser } from './store/authentication/authenticationSlice';
 import { Affix } from 'antd';
 import HubNotificationMessage from './Components/HubNotificationMessage';
+import Bar from './Components/Bar/Bar';
+import { Route, Switch } from 'react-router-dom';
+import Front from './Components/Front/Front';
+import PrivateRoute from './Components/Auth/PrivateRoute';
 
 
 function App() {
@@ -58,7 +62,11 @@ function App() {
       </Affix>
       <Content style={{ padding: '0 50px' }}>
         <div className="site-layout-content">
-          <Foo />
+          <Switch>
+            <Route path="/" exact component={Front} />
+            <PrivateRoute path="/foo" component={Foo} />
+            <Route path="/bar" component={Bar} />
+          </Switch>
         </div>
       </Content>
     </Layout>

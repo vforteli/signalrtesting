@@ -4,6 +4,7 @@ import { Button } from 'antd';
 import { Header } from 'antd/lib/layout/layout';
 import { useDispatch } from 'react-redux';
 import { clearCurrentUser } from '../../store/authentication/authenticationSlice';
+import { Link } from 'react-router-dom';
 
 
 function AppHeader() {
@@ -21,6 +22,9 @@ function AppHeader() {
                 ? <Button onClick={handleLogout} type='primary'>Log out</Button>
                 : <Button onClick={loginWithRedirect} type='primary'>Log In</Button>
             }
+            <Link to="/">Front</Link>
+            <Link to="/foo">Foo</Link>
+            <Link to="/bar">Bar</Link>
         </Header>
     );
 }

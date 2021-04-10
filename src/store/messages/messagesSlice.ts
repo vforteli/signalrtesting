@@ -3,11 +3,12 @@ import { RootState } from '../..';
 import { Message } from '../../Components/FooTypes';
 
 // todo refactor this, not exactly dry
-export const fetchPreviousMessages = createAsyncThunk<Message[]>('foo/fetchPreviousMessages',
+export const fetchPreviousMessages = createAsyncThunk<Message[]>(
+  'foo/fetchPreviousMessages',
   async (_, { getState }) => {
     const state = getState() as RootState
-    const fromDateQuery = state.messages.items.length > 0 ? `fromDate=${state.messages.items[-1].timeSent}` : '';
-    const response = await fetch(`https://localhost:5001/api/messages?${fromDateQuery}`, {
+    const fromDateQuery = state.messages.items.length > 0 ? `fromDate=${state.messages.items[state.messages.items.length - 1].timeSent}` : '';
+    const response = await fetch(process.env.REACT_APP_BACKEND_URL ?? '' + `/api/messages?${fromDateQuery}`, {
       headers: {
         'Content-Type': 'application/json',
         'Authorization': `Bearer ${state.currentUser.accessToken}`
@@ -18,29 +19,45 @@ export const fetchPreviousMessages = createAsyncThunk<Message[]>('foo/fetchPrevi
   }
 )
 
-export const sendMessage = createAsyncThunk('foo/sendMessage',
+export const sendMessage = createAsyncThunk(
+  'foo/sendMessage',
   async (message: string, { getState }) => {
+
+    // todo move this somewhere sensible
+    const regex = /XSRF-TOKEN=(?<csrfToken>[^;]*)/
+    const match = document.cookie.match(regex)
+    const csrfToken = match && match.groups ? match.groups.csrfToken : ''
+
     const state = getState() as RootState
-    const response = await fetch('https://localhost:5001/api/messages', {
+    const response = await fetch(process.env.REACT_APP_BACKEND_URL ?? '' + '/api/messages', {
       body: JSON.stringify({ message: message }),
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${state.currentUser.accessToken}`
+        'Authorization': `Bearer ${state.currentUser.accessToken}`,
+        'X-XSRF-TOKEN': csrfToken
       }
     });
     return await response.json();
   }
 )
 
-export const deleteMessage = createAsyncThunk('foo/deleteMessage',
+export const deleteMessage = createAsyncThunk(
+  'foo/deleteMessage',
   async (messageId: string, { getState }) => {
+
+    // todo move this somewhere sensible
+    const regex = /XSRF-TOKEN=(?<csrfToken>[^;]*)/
+    const match = document.cookie.match(regex)
+    const csrfToken = match && match.groups ? match.groups.csrfToken : ''
+
     const state = getState() as RootState
-    const response = await fetch(`https://localhost:5001/api/messages/${messageId}`, {
+    const response = await fetch(process.env.REACT_APP_BACKEND_URL ?? '' + `/api/messages/${messageId}`, {
       method: 'DELETE',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${state.currentUser.accessToken}`
+        'Authorization': `Bearer ${state.currentUser.accessToken}`,
+        'X-XSRF-TOKEN': csrfToken
       }
     });
 
@@ -48,10 +65,11 @@ export const deleteMessage = createAsyncThunk('foo/deleteMessage',
   }
 )
 
-export const clearMessages = createAsyncThunk('foo/clearMessages',
+export const clearMessages = createAsyncThunk(
+  'foo/clearMessages',
   async (_, { getState }) => {
     const state = getState() as RootState
-    const response = await fetch(`https://localhost:5001/api/messages/clear`, {
+    const response = await fetch(process.env.REACT_APP_BACKEND_URL ?? '' + `/api/messages/clear`, {
       method: 'DELETE',
       headers: {
         'Content-Type': 'application/json',

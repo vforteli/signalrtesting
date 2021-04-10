@@ -10,6 +10,8 @@ import fooSlice from './store/messages/messagesSlice';
 import signalrSlice from './store/messages/signalrSlice';
 import authenticationSlice from './store/authentication/authenticationSlice';
 import logger from 'redux-logger'
+import { BrowserRouter } from 'react-router-dom';
+import { ConfigProvider } from 'antd';
 
 
 const store = configureStore({
@@ -21,20 +23,29 @@ const store = configureStore({
   middleware: [logger, ...getDefaultMiddleware()],
 })
 
+const nonceRegex = /csp-nonce=(?<nonce>[^;]*)/
+const match = document.cookie.match(nonceRegex)
+const nonce = match && match.groups ? match.groups.nonce : ''
+
 export type RootState = ReturnType<typeof store.getState>;
 
 ReactDOM.render(
   <React.StrictMode>
     <Provider store={store}>
-      <Auth0Provider
-        domain={process.env.REACT_APP_AUTH_DOMAIN ?? ''}
-        clientId={process.env.REACT_APP_AUTH_CLIENT_ID ?? ''}
-        redirectUri={window.location.origin}
-        audience={process.env.REACT_APP_AUTH_AUDIENCE ?? ''}
-        cacheLocation='localstorage'
-        scope='openid%20profile%20email'    >
-        <App />
-      </Auth0Provider>
+      <BrowserRouter>
+        <Auth0Provider
+          domain={process.env.REACT_APP_AUTH_DOMAIN ?? ''}
+          clientId={process.env.REACT_APP_AUTH_CLIENT_ID ?? ''}
+          redirectUri={window.location.origin}
+          audience={process.env.REACT_APP_AUTH_AUDIENCE ?? ''}
+          cacheLocation='localstorage'
+          scope='openid profile email'
+        >
+          <ConfigProvider csp={{ nonce: nonce }}>
+            <App />
+          </ConfigProvider>
+        </Auth0Provider>
+      </BrowserRouter>
     </Provider>
   </React.StrictMode>,
   document.getElementById('root')
