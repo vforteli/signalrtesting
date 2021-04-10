@@ -16,14 +16,29 @@ variables:
 
 steps:
 - task: DotNetCoreCLI@2
+  displayName: Restore
   inputs:
-    command: 'restore'
-    projects: $(solution)
+    command: restore
+    projects: $(solution)    
+    restoreArguments: --locked-mode
     arguments: --locked-mode
-    feedsToUse: 'select'
+    feedsToUse: select
   
 - task: DotNetCoreCLI@2
+  displayName: Build
   inputs:
     command: build
     projects: $(solution)
     arguments: --configuration $(buildConfiguration) --no-restore
+  
+- task: DotNetCoreCLI@2
+  displayName: Publish
+  inputs:
+    command: publish
+    arguments:  --configuration $(buildConfiguration) --no-restore --no-build --output $(Build.ArtifactStagingDirectory)
+    zipAfterPublish: true
+
+- task: PublishBuildArtifacts@1
+  inputs:
+    pathtoPublish: $(Build.ArtifactStagingDirectory)
+    artifactName: backend
