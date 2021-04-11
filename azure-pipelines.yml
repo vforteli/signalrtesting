@@ -72,7 +72,7 @@ stages:
   dependsOn: 
   - buildfrontend
   - buildbackend
-  condition: and(eq(dependencies.buildfrontend.result, 'Succeeded'),dependencies.buildbackend.result, 'Succeeded'))
+  condition: and(eq(dependencies.buildfrontend.result, 'Succeeded'), eq(dependencies.buildbackend.result, 'Succeeded'))
   displayName: Merge frontend and backend project
   jobs:
   - job: Merge        
