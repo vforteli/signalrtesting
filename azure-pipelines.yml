@@ -67,6 +67,11 @@ stages:
     - script: npm ci
         
     - script: npm run build
+    
+    - task: PublishBuildArtifacts@1
+      inputs:
+        pathtoPublish: $(Build.ArtifactStagingDirectory)
+        artifactName: frontend
       
 - stage: merge
   dependsOn: 
@@ -76,5 +81,7 @@ stages:
   displayName: Merge frontend and backend project
   jobs:
   - job: Merge        
-        
+    steps:
+      - checkout: none
+      - download: current
       
