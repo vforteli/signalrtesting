@@ -58,7 +58,7 @@ stages:
         pathtoPublish: $(Build.ArtifactStagingDirectory)
         artifactName: backend
 
-- stage: builfrontend
+- stage: buildfrontend
   dependsOn: []
   displayName: Build frontend
   jobs:
