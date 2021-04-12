@@ -397,3 +397,5 @@ backend/backend/appsettings.json
 backend/backend/wwwroot/
 
 backend/backend/Properties/ServiceDependencies/tikali-appservice - Web Deploy/
+
+backend/backend/Properties/ServiceDependencies/tikali-appservice - Web Deploy1/profile.arm.json
