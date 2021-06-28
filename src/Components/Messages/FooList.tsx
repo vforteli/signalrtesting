@@ -1,47 +1,34 @@
 import React, { } from "react"
-import { Table, Button } from 'antd'
-import { Message } from "./FooTypes"
-import { useDispatch, useSelector } from "react-redux"
+import { useSelector } from "react-redux"
 import { RootState } from "../..";
-import { deleteMessage } from "../../store/messages/messagesSlice";
-
+import { CircularProgress, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from "@material-ui/core";
+import FooRow from "./FooRow";
 
 
 function FooList() {
     const messagesLoading = useSelector((state: RootState) => state.messages.messagesLoading);
     const items = useSelector((state: RootState) => state.messages.items);
-    const dispatch = useDispatch();
-
-    const columns = [
-        {
-            title: 'Sent',
-            dataIndex: 'timeSent',
-            width: '150px',
-        },
-        {
-            title: 'name',
-            dataIndex: 'name',
-            width: '200px',
-        },
-        {
-            title: 'message',
-            dataIndex: 'message',
-            width: '400px',
-        },
-        {
-            title: "action",
-            dataIndex: "action",
-            render: (text: any, record: Message) => <Button onClick={() => dispatch(deleteMessage(record.messageId))}> Delete</Button >
-        }
-    ]
 
     return (
-        <Table
-            loading={messagesLoading}
-            dataSource={items}
-            columns={columns}
-            rowKey={o => o.messageId}
-        />
+        messagesLoading
+            ? <CircularProgress />
+            : <TableContainer component={Paper}>
+                <Table>
+                    <TableHead>
+                        <TableRow>
+                            <TableCell>Sent</TableCell>
+                            <TableCell align="right">Name</TableCell>
+                            <TableCell>Message</TableCell>
+                            <TableCell align="right"></TableCell>
+                        </TableRow>
+                    </TableHead>
+                    <TableBody>
+                        {items.map((row) => (
+                            <FooRow row={row} />
+                        ))}
+                    </TableBody>
+                </Table>
+            </TableContainer>
     )
 }
 

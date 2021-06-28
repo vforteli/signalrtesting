@@ -11,7 +11,6 @@ import signalrSlice from './store/messages/signalrSlice';
 import authenticationSlice from './store/authentication/authenticationSlice';
 import logger from 'redux-logger'
 import { BrowserRouter } from 'react-router-dom';
-import { ConfigProvider } from 'antd';
 
 
 const store = configureStore({
@@ -23,9 +22,10 @@ const store = configureStore({
   middleware: [logger, ...getDefaultMiddleware()],
 })
 
-const nonceRegex = /csp-nonce=(?<nonce>[^;]*)/
-const match = document.cookie.match(nonceRegex)
-const nonce = match && match.groups ? match.groups.nonce : ''
+// todo supposedly material ui picks the nonce from meta by itself
+// const nonceRegex = /csp-nonce=(?<nonce>[^;]*)/
+// const match = document.cookie.match(nonceRegex)
+// const nonce = match && match.groups ? match.groups.nonce : ''
 
 export type RootState = ReturnType<typeof store.getState>;
 
@@ -41,9 +41,7 @@ ReactDOM.render(
           cacheLocation='localstorage'
           scope='openid profile email'
         >
-          <ConfigProvider csp={{ nonce: nonce }}>
-            <App />
-          </ConfigProvider>
+          <App />
         </Auth0Provider>
       </BrowserRouter>
     </Provider>

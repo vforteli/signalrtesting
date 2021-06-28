@@ -1,9 +1,9 @@
 import React, { useState } from "react"
-import { Button, Input } from 'antd'
 import { useDispatch, useSelector } from "react-redux";
 import { HubConnectionState } from "@microsoft/signalr";
 import { clearMessages, sendMessage } from "../../store/messages/messagesSlice";
 import { RootState } from "../..";
+import { Button, Input } from "@material-ui/core";
 
 
 function FooForm() {
@@ -20,7 +20,7 @@ function FooForm() {
     }
 
 
-    const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         if (e.key === 'Enter') {
             handleSendMessage();
         }
@@ -30,7 +30,7 @@ function FooForm() {
         <>
             <Input type="text" disabled={hubState !== HubConnectionState.Connected} onChange={(e) => setMessage(e.target.value)} value={message} onKeyDown={e => handleKeyPress(e)}></Input>
             <Button onClick={() => handleSendMessage()} disabled={hubState !== HubConnectionState.Connected}>Send</Button>
-            <Button onClick={() => dispatch(clearMessages())} disabled={hubState !== HubConnectionState.Connected || clearMessagesLoading} loading={clearMessagesLoading}>Clear all</Button>
+            <Button onClick={() => dispatch(clearMessages())} disabled={hubState !== HubConnectionState.Connected || clearMessagesLoading}>Clear all</Button>
         </>
     )
 }

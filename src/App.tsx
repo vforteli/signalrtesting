@@ -2,20 +2,19 @@ import { useEffect } from 'react';
 import './App.css';
 import Foo from './Components/Messages/Foo';
 import { useAuth0 } from "@auth0/auth0-react";
-import Layout, { Content } from 'antd/lib/layout/layout';
 import AppHeader from './Components/Header/Header';
 import { useDispatch } from 'react-redux';
 import { fetchPreviousMessages, messageDeleted, messageReceived, messagesCleared } from './store/messages/messagesSlice';
 import { setHubConnectionState } from './store/messages/signalrSlice';
 import { HubConnection, HubConnectionBuilder, HubConnectionState } from '@microsoft/signalr';
 import { setCurrentUser } from './store/authentication/authenticationSlice';
-import { Affix } from 'antd';
 import HubNotificationMessage from './Components/HubNotificationMessage';
 import Bar from './Components/Bar/Bar';
 import { Route, Switch } from 'react-router-dom';
 import Front from './Components/Front/Front';
 import PrivateRoute from './Components/Auth/PrivateRoute';
 import { Message } from './Components/Messages/FooTypes';
+import { Container, CssBaseline } from '@material-ui/core';
 
 
 function App() {
@@ -55,21 +54,21 @@ function App() {
   }, [connection, isAuthenticated, getAccessTokenSilently, dispatch, user])
 
   return (
-    <Layout className="layout" style={{ minHeight: "100vh" }}>
+    <>
+      <CssBaseline />
+
       <HubNotificationMessage />
-      <Affix offsetTop={0}>
-        <AppHeader />
-      </Affix>
-      <Content style={{ padding: '0 50px' }}>
-        <div className="site-layout-content">
-          <Switch>
-            <Route path="/" exact component={Front} />
-            <PrivateRoute path="/foo" component={Foo} />
-            <Route path="/bar" component={Bar} />
-          </Switch>
-        </div>
-      </Content>
-    </Layout>
+
+      <AppHeader />
+
+      <Container>
+        <Switch>
+          <Route path="/" exact component={Front} />
+          <PrivateRoute path="/foo" component={Foo} />
+          <Route path="/bar" component={Bar} />
+        </Switch>
+      </Container>
+    </>
   );
 }
 

@@ -1,17 +1,12 @@
-import React, { useState } from "react"
-import { Content } from "antd/lib/layout/layout";
-import TextAreaAutoSize from "../TextAreaAutoSize";
+import React from "react"
 
 
 function Front() {
-    const [value, setValue] = useState('')
-
 
     return (
-        <Content>
+        <div>
             front...
-            <TextAreaAutoSize value={value} onChange={e => setValue(e.currentTarget.value)} minRows={2} />
-        </Content>
+        </div>
     )
 }
 
