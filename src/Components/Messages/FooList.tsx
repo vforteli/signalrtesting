@@ -24,7 +24,7 @@ function FooList() {
                     </TableHead>
                     <TableBody>
                         {items.map((row) => (
-                            <FooRow row={row} />
+                            <FooRow key={row.messageId} row={row} />
                         ))}
                     </TableBody>
                 </Table>
