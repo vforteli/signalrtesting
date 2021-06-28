@@ -7,7 +7,8 @@ import { deleteMessage } from "../store/messages/messagesSlice"
 
 
 function FooList() {
-    const { items, messagesLoading } = useSelector((state: RootState) => state.messages);
+    const messagesLoading = useSelector((state: RootState) => state.messages.messagesLoading);
+    const items = useSelector((state: RootState) => state.messages.items);
     const dispatch = useDispatch();
 
     const columns = [
