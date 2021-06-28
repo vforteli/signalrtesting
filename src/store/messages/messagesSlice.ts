@@ -1,6 +1,7 @@
 import { Action, createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { RootState } from '../..';
 import { Message } from '../../Components/Messages/FooTypes';
+import { getCsrfTokenFromCookie } from '../../Utils';
 
 // todo refactor this, not exactly dry
 export const fetchPreviousMessages = createAsyncThunk<Message[]>(
@@ -22,12 +23,6 @@ export const fetchPreviousMessages = createAsyncThunk<Message[]>(
 export const sendMessage = createAsyncThunk(
   'foo/sendMessage',
   async (message: string, { getState }) => {
-
-    // todo move this somewhere sensible
-    const regex = /XSRF-TOKEN=(?<csrfToken>[^;]*)/
-    const match = document.cookie.match(regex)
-    const csrfToken = match && match.groups ? match.groups.csrfToken : ''
-
     const state = getState() as RootState
     const response = await fetch((process.env.REACT_APP_BACKEND_URL ?? '') + '/api/messages', {
       body: JSON.stringify({ message: message }),
@@ -35,7 +30,7 @@ export const sendMessage = createAsyncThunk(
       headers: {
         'Content-Type': 'application/json',
         'Authorization': `Bearer ${state.currentUser.accessToken}`,
-        'X-XSRF-TOKEN': csrfToken
+        'X-XSRF-TOKEN': getCsrfTokenFromCookie()
       }
     });
     return await response.json();
@@ -45,19 +40,13 @@ export const sendMessage = createAsyncThunk(
 export const deleteMessage = createAsyncThunk(
   'foo/deleteMessage',
   async (messageId: string, { getState }) => {
-
-    // todo move this somewhere sensible
-    const regex = /XSRF-TOKEN=(?<csrfToken>[^;]*)/
-    const match = document.cookie.match(regex)
-    const csrfToken = match && match.groups ? match.groups.csrfToken : ''
-
     const state = getState() as RootState
     const response = await fetch((process.env.REACT_APP_BACKEND_URL ?? '') + `/api/messages/${messageId}`, {
       method: 'DELETE',
       headers: {
         'Content-Type': 'application/json',
         'Authorization': `Bearer ${state.currentUser.accessToken}`,
-        'X-XSRF-TOKEN': csrfToken
+        'X-XSRF-TOKEN': getCsrfTokenFromCookie()
       }
     });
 
@@ -143,6 +132,7 @@ export const {
   messageReceived,
   messagesCleared,
   messageDeleted,
-  getMessages } = fooSlice.actions
+  getMessages
+} = fooSlice.actions
 
 export default fooSlice.reducer
