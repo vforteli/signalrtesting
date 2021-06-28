@@ -1,9 +1,9 @@
 import React, { useState } from "react"
 import { Button, Input } from 'antd'
 import { useDispatch, useSelector } from "react-redux";
-import { clearMessages, sendMessage } from "../store/messages/messagesSlice";
-import { RootState } from "..";
 import { HubConnectionState } from "@microsoft/signalr";
+import { clearMessages, sendMessage } from "../../store/messages/messagesSlice";
+import { RootState } from "../..";
 
 
 function FooForm() {
@@ -28,7 +28,8 @@ function FooForm() {
 
     return (
         <>
-            <Input type="text" disabled={hubState !== HubConnectionState.Connected} onChange={(e) => setMessage(e.target.value)} value={message} onKeyDown={e => handleKeyPress(e)}></Input> <Button onClick={() => handleSendMessage()} disabled={hubState !== HubConnectionState.Connected}>Send</Button>
+            <Input type="text" disabled={hubState !== HubConnectionState.Connected} onChange={(e) => setMessage(e.target.value)} value={message} onKeyDown={e => handleKeyPress(e)}></Input>
+            <Button onClick={() => handleSendMessage()} disabled={hubState !== HubConnectionState.Connected}>Send</Button>
             <Button onClick={() => dispatch(clearMessages())} disabled={hubState !== HubConnectionState.Connected || clearMessagesLoading} loading={clearMessagesLoading}>Clear all</Button>
         </>
     )

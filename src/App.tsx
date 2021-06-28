@@ -1,9 +1,8 @@
-import React, { useEffect } from 'react';
+import { useEffect } from 'react';
 import './App.css';
-import Foo from './Components/Foo';
+import Foo from './Components/Messages/Foo';
 import { useAuth0 } from "@auth0/auth0-react";
 import Layout, { Content } from 'antd/lib/layout/layout';
-import { Message } from './Components/FooTypes';
 import AppHeader from './Components/Header/Header';
 import { useDispatch } from 'react-redux';
 import { fetchPreviousMessages, messageDeleted, messageReceived, messagesCleared } from './store/messages/messagesSlice';
@@ -16,6 +15,7 @@ import Bar from './Components/Bar/Bar';
 import { Route, Switch } from 'react-router-dom';
 import Front from './Components/Front/Front';
 import PrivateRoute from './Components/Auth/PrivateRoute';
+import { Message } from './Components/Messages/FooTypes';
 
 
 function App() {

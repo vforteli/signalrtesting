@@ -1,6 +1,6 @@
 import { Action, createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { RootState } from '../..';
-import { Message } from '../../Components/FooTypes';
+import { Message } from '../../Components/Messages/FooTypes';
 
 // todo refactor this, not exactly dry
 export const fetchPreviousMessages = createAsyncThunk<Message[]>(
