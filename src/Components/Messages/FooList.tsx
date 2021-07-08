@@ -1,9 +1,9 @@
 import React, { } from "react"
 import { useSelector } from "react-redux"
 import { RootState } from "../..";
-import { CircularProgress, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from "@material-ui/core";
+import { Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from "@material-ui/core";
 import FooRow from "./FooRow";
-
+import Skeleton from '@material-ui/lab/Skeleton';
 
 function FooList() {
     const messagesLoading = useSelector((state: RootState) => state.messages.messagesLoading);
@@ -11,7 +11,7 @@ function FooList() {
 
     return (
         messagesLoading
-            ? <CircularProgress />
+            ? <Skeleton animation="wave" />
             : <TableContainer component={Paper}>
                 <Table>
                     <TableHead>

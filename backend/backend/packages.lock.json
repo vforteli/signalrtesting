@@ -33,13 +33,13 @@
       },
       "Microsoft.Azure.SignalR": {
         "type": "Direct",
-        "requested": "[1.9.0, )",
-        "resolved": "1.9.0",
-        "contentHash": "kYJXPnexub5dWl92T2VhCpswWEL9HRCcXmX5qeMNrd00nLIyhqgYubGdUplWV7aqXLvL+QrQ45v4RLxuQffI1A==",
+        "requested": "[1.9.1, )",
+        "resolved": "1.9.1",
+        "contentHash": "036DYsbwUf8nf2GebItA1/6C/cvzJpu9h/LH7eq98Wltcni88SKt1qbNuo8rGVQrvULe9SqWW3FXQsLNmswPEA==",
         "dependencies": {
           "Azure.Identity": "1.4.0",
           "Microsoft.AspNetCore.Http.Connections.Client": "5.0.1",
-          "Microsoft.Azure.SignalR.Protocols": "1.9.0",
+          "Microsoft.Azure.SignalR.Protocols": "1.9.1",
           "Microsoft.Extensions.Http": "2.1.0",
           "Microsoft.Rest.ClientRuntime": "2.3.21",
           "System.IdentityModel.Tokens.Jwt": "5.5.0"
@@ -152,8 +152,8 @@
       },
       "Microsoft.Azure.SignalR.Protocols": {
         "type": "Transitive",
-        "resolved": "1.9.0",
-        "contentHash": "EF7CAAZB+d30HEacLuQmju/gbmtRxnuRYnUfn1vlWYr/1pH7scoGVSYbKRxAuRe3Z3TN9uIWmICg4hLhCXTSow==",
+        "resolved": "1.9.1",
+        "contentHash": "vr/HcpHAzNDwNLWltscZ0o2NesP+LTxjk+ERCW13eXiE4JYN5K0Uox8X5M+ERfYLt6l92rxsm5eRH6y79ABtww==",
         "dependencies": {
           "Azure.Identity": "1.4.0",
           "Microsoft.AspNetCore.Connections.Abstractions": "2.1.0",
