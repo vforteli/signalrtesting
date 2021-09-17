@@ -82,39 +82,12 @@ namespace backend
                 endpoints.MapHub<TestHub>("/hubs/test");
             });
 
-            app.Use(async (context, next) =>
-            {
-                var safeMethods = new[] { "GET", "OPTION", "TRACE", "HEAD" };
-                if (!safeMethods.Contains(context.Request.Method))
-                {
-                    if (context.Request.Headers.TryGetValue("X-XSRF-TOKEN", out var headerToken)
-                    && context.Request.Cookies.TryGetValue("XSRF-TOKEN", out var cookieToken))
-                    {
-                        Console.WriteLine($"Found token in header: {headerToken}");
-                        Console.WriteLine($"Found token in cookie: {cookieToken}");
-
-                        if (!string.IsNullOrEmpty(headerToken) && cookieToken == headerToken)
-                        {
-                            await next();
-                            return;
-                        }
-                    }
-
-                    Console.WriteLine("XSRF mismatch, abort abort!");
-                    context.Response.StatusCode = 400;
-                    await context.Response.WriteAsync("XSRF mismatch...");
-                    await context.Response.CompleteAsync();
-                    return;
-                }
-
-                await next();
-            });
+            app.UseCsrfValidationMiddleware();
 
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
             });
-
 
 
             using var rng = new RNGCryptoServiceProvider();
