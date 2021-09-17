@@ -1,5 +1,6 @@
 import { Action, createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { RootState } from '../..';
+import { HubService } from '../../apiclient';
 import { Message } from '../../Components/Messages/FooTypes';
 import { getCsrfTokenFromCookie } from '../../Utils';
 
@@ -9,6 +10,10 @@ export const fetchPreviousMessages = createAsyncThunk<Message[]>(
   async (_, { getState }) => {
     const state = getState() as RootState
     const fromDateQuery = state.messages.items.length > 0 ? `fromDate=${state.messages.items[state.messages.items.length - 1].timeSent}` : '';
+
+
+    const responseFoo = await HubService.getHubService(fromDateQuery)
+
     const response = await fetch((process.env.REACT_APP_BACKEND_URL ?? '') + `/api/messages?${fromDateQuery}`, {
       headers: {
         'Content-Type': 'application/json',
@@ -16,7 +21,8 @@ export const fetchPreviousMessages = createAsyncThunk<Message[]>(
       }
     });
 
-    return await response.json();
+    return responseFoo.map(o => ({ message: o.message!, messageId: o.messageId!, name: o.name!, timeSent: o.timeSent! }))
+    //return await response.json();
   }
 )
 
@@ -24,6 +30,9 @@ export const sendMessage = createAsyncThunk(
   'foo/sendMessage',
   async (message: string, { getState }) => {
     const state = getState() as RootState
+
+    const responseFoo = await HubService.postHubService({ message: message })
+
     const response = await fetch((process.env.REACT_APP_BACKEND_URL ?? '') + '/api/messages', {
       body: JSON.stringify({ message: message }),
       method: 'POST',
@@ -75,6 +84,7 @@ const fooSlice = createSlice({
     items: [] as Message[],
     messagesLoading: false,
     clearMessagesLoading: false,
+    selectedMessages: [] as string[]
   },
   reducers: {
     messageReceived(state, action: PayloadAction<Message>) {
@@ -88,6 +98,14 @@ const fooSlice = createSlice({
     },
     getMessages(state, action: PayloadAction<Message[]>) {
       state.items = action.payload
+    },
+    setMessageActive(state, action: PayloadAction<({ messageId: string, active: boolean })>) {
+      if (action.payload.active && !state.selectedMessages.includes(action.payload.messageId)) {
+        state.selectedMessages.push(action.payload.messageId)
+      }
+      else if (!action.payload.active && state.selectedMessages.includes(action.payload.messageId)) {
+        state.selectedMessages = state.selectedMessages.filter(o => o !== action.payload.messageId);
+      }
     }
   },
   extraReducers: (builder) => {
@@ -132,7 +150,8 @@ export const {
   messageReceived,
   messagesCleared,
   messageDeleted,
-  getMessages
+  getMessages,
+  setMessageActive
 } = fooSlice.actions
 
 export default fooSlice.reducer
