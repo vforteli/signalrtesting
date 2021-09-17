@@ -21,7 +21,7 @@ export const fetchPreviousMessages = createAsyncThunk<Message[]>(
       }
     });
 
-    return responseFoo.map(o => ({ message: o.message!, messageId: o.messageId!, name: o.name!, timeSent: o.timeSent! }))
+    return responseFoo.map(o => ({ message: o.message, messageId: o.messageId, name: o.name, timeSent: o.timeSent }))
     //return await response.json();
   }
 )
