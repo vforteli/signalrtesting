@@ -11,18 +11,16 @@ export const fetchPreviousMessages = createAsyncThunk<Message[]>(
     const state = getState() as RootState
     const fromDateQuery = state.messages.items.length > 0 ? `fromDate=${state.messages.items[state.messages.items.length - 1].timeSent}` : '';
 
-
     const responseFoo = await HubService.getHubService(fromDateQuery)
 
-    const response = await fetch((process.env.REACT_APP_BACKEND_URL ?? '') + `/api/messages?${fromDateQuery}`, {
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${state.currentUser.accessToken}`
-      }
-    });
+    // const response = await fetch((process.env.REACT_APP_BACKEND_URL ?? '') + `/api/messages?${fromDateQuery}`, {
+    //   headers: {
+    //     'Content-Type': 'application/json',
+    //     'Authorization': `Bearer ${state.currentUser.accessToken}`
+    //   }
+    // });
 
-    return responseFoo.map(o => ({ message: o.message, messageId: o.messageId, name: o.name, timeSent: o.timeSent }))
-    //return await response.json();
+    return responseFoo.map(o => ({ message: o.message!, messageId: o.messageId!, name: o.name!, timeSent: o.timeSent! }))
   }
 )
 
@@ -33,16 +31,17 @@ export const sendMessage = createAsyncThunk(
 
     const responseFoo = await HubService.postHubService({ message: message })
 
-    const response = await fetch((process.env.REACT_APP_BACKEND_URL ?? '') + '/api/messages', {
-      body: JSON.stringify({ message: message }),
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${state.currentUser.accessToken}`,
-        'X-XSRF-TOKEN': getCsrfTokenFromCookie()
-      }
-    });
-    return await response.json();
+    // const response = await fetch((process.env.REACT_APP_BACKEND_URL ?? '') + '/api/messages', {
+    //   body: JSON.stringify({ message: message }),
+    //   method: 'POST',
+    //   headers: {
+    //     'Content-Type': 'application/json',
+    //     'Authorization': `Bearer ${state.currentUser.accessToken}`,
+    //     'X-XSRF-TOKEN': getCsrfTokenFromCookie()
+    //   }
+    // });
+
+    return responseFoo
   }
 )
 

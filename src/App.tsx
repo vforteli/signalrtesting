@@ -15,6 +15,7 @@ import Front from './Components/Front/Front';
 import PrivateRoute from './Components/Auth/PrivateRoute';
 import { Message } from './Components/Messages/FooTypes';
 import { Container, CssBaseline } from '@material-ui/core';
+import { OpenAPI } from './apiclient';
 
 
 function App() {
@@ -39,7 +40,9 @@ function App() {
     if (isAuthenticated) {
       (async () => {
         const token = await getAccessTokenSilently();
-        dispatch(setCurrentUser({ accessToken: token, isLoggedIn: isAuthenticated, username: user?.name ?? '' }))
+        OpenAPI.BASE = process.env.REACT_APP_BACKEND_URL ?? ''
+        OpenAPI.TOKEN = token
+        dispatch(setCurrentUser({ accessToken: token, isLoggedIn: isAuthenticated, username: user?.name ?? '' }))       
       })();
 
       dispatch(setHubConnectionState(HubConnectionState.Connecting));
