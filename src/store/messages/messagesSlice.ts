@@ -2,78 +2,40 @@ import { Action, createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/t
 import { RootState } from '../..';
 import { HubService } from '../../apiclient';
 import { Message } from '../../Components/Messages/FooTypes';
-import { getCsrfTokenFromCookie } from '../../Utils';
 
-// todo refactor this, not exactly dry
+
 export const fetchPreviousMessages = createAsyncThunk<Message[]>(
   'foo/fetchPreviousMessages',
   async (_, { getState }) => {
     const state = getState() as RootState
     const fromDateQuery = state.messages.items.length > 0 ? `fromDate=${state.messages.items[state.messages.items.length - 1].timeSent}` : '';
 
-    const responseFoo = await HubService.getHubService(fromDateQuery)
-
-    // const response = await fetch((process.env.REACT_APP_BACKEND_URL ?? '') + `/api/messages?${fromDateQuery}`, {
-    //   headers: {
-    //     'Content-Type': 'application/json',
-    //     'Authorization': `Bearer ${state.currentUser.accessToken}`
-    //   }
-    // });
-
-    return responseFoo.map(o => ({ message: o.message!, messageId: o.messageId!, name: o.name!, timeSent: o.timeSent! }))
+    const response = await HubService.getHubService(fromDateQuery)
+    return response.map(o => ({ message: o.message!, messageId: o.messageId!, name: o.name!, timeSent: o.timeSent! }))
   }
 )
 
 export const sendMessage = createAsyncThunk(
   'foo/sendMessage',
-  async (message: string, { getState }) => {
-    const state = getState() as RootState
-
-    const responseFoo = await HubService.postHubService({ message: message })
-
-    // const response = await fetch((process.env.REACT_APP_BACKEND_URL ?? '') + '/api/messages', {
-    //   body: JSON.stringify({ message: message }),
-    //   method: 'POST',
-    //   headers: {
-    //     'Content-Type': 'application/json',
-    //     'Authorization': `Bearer ${state.currentUser.accessToken}`,
-    //     'X-XSRF-TOKEN': getCsrfTokenFromCookie()
-    //   }
-    // });
-
-    return responseFoo
+  async (message: string, { }) => {
+    const response = await HubService.postHubService({ message: message })
+    return response
   }
 )
 
 export const deleteMessage = createAsyncThunk(
   'foo/deleteMessage',
-  async (messageId: string, { getState }) => {
-    const state = getState() as RootState
-    const response = await fetch((process.env.REACT_APP_BACKEND_URL ?? '') + `/api/messages/${messageId}`, {
-      method: 'DELETE',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${state.currentUser.accessToken}`,
-        'X-XSRF-TOKEN': getCsrfTokenFromCookie()
-      }
-    });
-
-    return await response.json() as Message
+  async (messageId: string, { }) => {
+    const response = await HubService.deleteHubService(messageId)
+    return response as Message
   }
 )
 
 export const clearMessages = createAsyncThunk(
   'foo/clearMessages',
-  async (_, { getState }) => {
-    const state = getState() as RootState
-    const response = await fetch((process.env.REACT_APP_BACKEND_URL ?? '') + `/api/messages/clear`, {
-      method: 'DELETE',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${state.currentUser.accessToken}`
-      }
-    })
-    return response.status
+  async (_, { }) => {
+    const response = await HubService.deleteHubService1();  // todo this is generated with the wrong name...    
+    return response
   }
 )
 

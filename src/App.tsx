@@ -16,6 +16,7 @@ import PrivateRoute from './Components/Auth/PrivateRoute';
 import { Message } from './Components/Messages/FooTypes';
 import { Container, CssBaseline } from '@material-ui/core';
 import { OpenAPI } from './apiclient';
+import { getCsrfTokenFromCookie } from './Utils';
 
 
 function App() {
@@ -42,7 +43,8 @@ function App() {
         const token = await getAccessTokenSilently();
         OpenAPI.BASE = process.env.REACT_APP_BACKEND_URL ?? ''
         OpenAPI.TOKEN = token
-        dispatch(setCurrentUser({ accessToken: token, isLoggedIn: isAuthenticated, username: user?.name ?? '' }))       
+        OpenAPI.HEADERS = { 'X-XSRF-TOKEN': getCsrfTokenFromCookie() }
+        dispatch(setCurrentUser({ accessToken: token, isLoggedIn: isAuthenticated, username: user?.name ?? '' }))
       })();
 
       dispatch(setHubConnectionState(HubConnectionState.Connecting));
