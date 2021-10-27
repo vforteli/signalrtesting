@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -27,18 +28,18 @@ namespace backend.Controllers
 
 
         [HttpPost("api/messages")]
-        public async Task<IActionResult> PostMessage([FromBody] SendMessageModel model)
+        public async Task<ActionResult<MessageModel>> PostMessage([FromBody][Required] SendMessageModel model)
         {
             var item = new MessageModel(HttpContext?.User?.Identity?.Name!, Guid.NewGuid(), model.Message, DateTime.UtcNow);
             _messageService.Messages.TryAdd(item.MessageId, item);
             await _hubContext.Clients.All.SendAsync("broadcastMessage", item);
 
-            return Accepted(item);
+            return item;
         }
 
 
         [HttpDelete("api/messages/{messageId}")]
-        public async Task<IActionResult> DeleteMessage([FromRoute] Guid messageId)
+        public async Task<IActionResult> DeleteMessage([FromRoute][Required] Guid messageId)
         {
             if (_messageService.Messages.TryRemove(messageId, out var deletedMessage))
             {

@@ -10,8 +10,7 @@ export const fetchPreviousMessages = createAsyncThunk<Message[]>(
     const state = getState() as RootState
     const fromDateQuery = state.messages.items.length > 0 ? `fromDate=${state.messages.items[state.messages.items.length - 1].timeSent}` : '';
 
-    const response = await HubService.getHubService(fromDateQuery)
-    return response.map(o => ({ message: o.message!, messageId: o.messageId!, name: o.name!, timeSent: o.timeSent! }))
+    return await HubService.getHubService(fromDateQuery)    
   }
 )
 

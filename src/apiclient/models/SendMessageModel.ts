@@ -3,5 +3,5 @@
 /* eslint-disable */
 
 export type SendMessageModel = {
-    message?: string | null;
+    message: string;
 }

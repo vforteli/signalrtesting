@@ -34,6 +34,8 @@ namespace backend
             services.AddControllers();
             services.AddSwaggerGen(c =>
             {
+                c.SchemaFilter<NullableSchemaFilter>();
+                c.SupportNonNullableReferenceTypes();
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "backend", Version = "v1" });
             });
 
@@ -76,13 +78,13 @@ namespace backend
             app.UseAuthorization();
 
             app.UseStaticFiles();
+            app.UseCsrfValidationMiddleware();
 
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapHub<TestHub>("/hubs/test");
             });
 
-            app.UseCsrfValidationMiddleware();
 
             app.UseEndpoints(endpoints =>
             {

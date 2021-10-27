@@ -9,16 +9,17 @@ export class HubService {
 
     /**
      * @param requestBody 
-     * @returns any Success
+     * @returns MessageModel Success
      * @throws ApiError
      */
     public static async postHubService(
-requestBody?: SendMessageModel,
-): Promise<any> {
+requestBody: SendMessageModel,
+): Promise<MessageModel> {
         const result = await __request({
             method: 'POST',
             path: `/api/messages`,
             body: requestBody,
+            mediaType: 'application/json',
         });
         return result.body;
     }

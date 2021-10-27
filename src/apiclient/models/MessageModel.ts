@@ -3,8 +3,8 @@
 /* eslint-disable */
 
 export type MessageModel = {
-    name?: string;
-    messageId?: string;
-    message?: string;
-    timeSent?: string;
+    name: string;
+    messageId: string;
+    message: string;
+    timeSent: string;
 }
