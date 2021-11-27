@@ -63,6 +63,7 @@ public class Program
         app.UseAuthorization();
 
         app.UseStaticFiles();
+        
         app.UseCsrfValidationMiddleware();
 
         app.UseEndpoints(endpoints =>

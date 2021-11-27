@@ -10,13 +10,14 @@ import { HubConnection, HubConnectionBuilder, HubConnectionState } from '@micros
 import { setCurrentUser } from './store/authentication/authenticationSlice';
 import HubNotificationMessage from './Components/HubNotificationMessage';
 import Bar from './Components/Bar/Bar';
-import { Route, Switch } from 'react-router-dom';
+import { Route } from 'react-router-dom';
 import Front from './Components/Front/Front';
 import PrivateRoute from './Components/Auth/PrivateRoute';
 import { Message } from './Components/Messages/FooTypes';
 import { Container, CssBaseline } from '@material-ui/core';
 import { OpenAPI } from './apiclient';
 import { getCsrfTokenFromCookie } from './Utils';
+import { Switch } from 'react-router-dom';
 
 
 function App() {
@@ -25,7 +26,7 @@ function App() {
 
   const connection: HubConnection = new HubConnectionBuilder()
     .withAutomaticReconnect()
-    .withUrl(process.env.REACT_APP_SIGNALR_HUB_URL ?? '', { accessTokenFactory: getAccessTokenSilently })
+    .withUrl(process.env.REACT_APP_SIGNALR_HUB_URL ?? '', { accessTokenFactory: getAccessTokenSilently, headers: { 'X-XSRF-TOKEN': getCsrfTokenFromCookie() } })
     .build();
 
   connection.on("broadcastMessage", (message: Message) => dispatch(messageReceived(message)));
