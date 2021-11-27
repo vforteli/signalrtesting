@@ -1,17 +1,11 @@
 using backend.Hubs;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.FileProviders.Physical;
-using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.IO;
 using System.Security.Claims;
-using System.Security.Cryptography;
 
 namespace backend;
 
@@ -79,20 +73,7 @@ public class Program
 
         var indexContent = File.ReadAllText(Path.Combine(builder.Environment.WebRootPath, "index.html"));   // todo hmmm...
 
-        app.Run(async context =>
-        {
-            var cspNonce = WebEncoders.Base64UrlEncode(RandomNumberGenerator.GetBytes(32));
-            var csp = builder.Configuration["CspPolicy"].Replace("{cspNonce}", cspNonce);
-            context.Response.Headers.Add("Content-Security-Policy", csp);
-            context.Response.Cookies.Append("csp-nonce", cspNonce, new CookieOptions { IsEssential = true, SameSite = SameSiteMode.Strict, Secure = true });
-
-            var csrfToken = WebEncoders.Base64UrlEncode(RandomNumberGenerator.GetBytes(32));
-            context.Response.Cookies.Append("XSRF-TOKEN", csrfToken, new CookieOptions { IsEssential = true, SameSite = SameSiteMode.Strict, Secure = true });
-
-            context.Response.ContentType = "text/html";
-            await context.Response.WriteAsync(indexContent.Replace("{{nonce}}", cspNonce));
-            await context.Response.CompleteAsync();
-        });
+        app.UseIndex(new IndexMiddlewareOptions(builder.Configuration["CspPolicy"], indexContent));
 
         app.Run();
     }
