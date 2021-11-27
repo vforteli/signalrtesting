@@ -63,7 +63,7 @@ public class Program
         app.UseAuthorization();
 
         app.UseStaticFiles();
-        
+
         app.UseCsrfValidationMiddleware();
 
         app.UseEndpoints(endpoints =>
@@ -77,6 +77,8 @@ public class Program
             endpoints.MapControllers();
         });
 
+        var indexContent = File.ReadAllText(Path.Combine(builder.Environment.WebRootPath, "index.html"));   // todo hmmm...
+
         app.Run(async context =>
         {
             var cspNonce = WebEncoders.Base64UrlEncode(RandomNumberGenerator.GetBytes(32));
@@ -88,7 +90,7 @@ public class Program
             context.Response.Cookies.Append("XSRF-TOKEN", csrfToken, new CookieOptions { IsEssential = true, SameSite = SameSiteMode.Strict, Secure = true });
 
             context.Response.ContentType = "text/html";
-            await context.Response.SendFileAsync(new PhysicalFileInfo(new FileInfo(Path.Combine(builder.Environment.WebRootPath, "index.html"))));
+            await context.Response.WriteAsync(indexContent.Replace("{{nonce}}", cspNonce));
             await context.Response.CompleteAsync();
         });
 

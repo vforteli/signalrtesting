@@ -10,14 +10,14 @@ export const fetchPreviousMessages = createAsyncThunk<Message[]>(
     const state = getState() as RootState
     const fromDateQuery = state.messages.items.length > 0 ? `fromDate=${state.messages.items[state.messages.items.length - 1].timeSent}` : '';
 
-    return await HubService.getHubService(fromDateQuery)    
+    return await HubService.getHub(fromDateQuery)
   }
 )
 
 export const sendMessage = createAsyncThunk(
   'foo/sendMessage',
   async (message: string, { }) => {
-    const response = await HubService.postHubService({ message: message })
+    const response = await HubService.postHub({ message: message })
     return response
   }
 )
@@ -25,7 +25,7 @@ export const sendMessage = createAsyncThunk(
 export const deleteMessage = createAsyncThunk(
   'foo/deleteMessage',
   async (messageId: string, { }) => {
-    const response = await HubService.deleteHubService(messageId)
+    const response = await HubService.deleteHub(messageId)
     return response as Message
   }
 )
@@ -33,7 +33,7 @@ export const deleteMessage = createAsyncThunk(
 export const clearMessages = createAsyncThunk(
   'foo/clearMessages',
   async (_, { }) => {
-    const response = await HubService.deleteHubService1();  // todo this is generated with the wrong name...    
+    const response = await HubService.deleteHub1();  // todo this is generated with the wrong name...    
     return response
   }
 )
