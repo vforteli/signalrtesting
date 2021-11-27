@@ -38,12 +38,12 @@ namespace backend.Controllers
 
 
         [HttpDelete("api/messages/{messageId}")]
-        public async Task<IActionResult> DeleteMessage([FromRoute][Required] Guid messageId)
+        public async Task<ActionResult<MessageModel>> DeleteMessage([FromRoute][Required] Guid messageId)
         {
             if (_messageService.Messages.TryRemove(messageId, out var deletedMessage))
             {
                 await _hubContext.Clients.All.SendAsync("deleteMessage", messageId);
-                return Accepted(deletedMessage);
+                return deletedMessage;
             }
 
             return BadRequest("Message not found");

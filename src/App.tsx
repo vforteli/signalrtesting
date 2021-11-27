@@ -13,9 +13,8 @@ import Bar from './Components/Bar/Bar';
 import { Route } from 'react-router-dom';
 import Front from './Components/Front/Front';
 import PrivateRoute from './Components/Auth/PrivateRoute';
-import { Message } from './Components/Messages/FooTypes';
 import { Container, CssBaseline } from '@material-ui/core';
-import { OpenAPI } from './apiclient';
+import { MessageModel, OpenAPI } from './apiclient';
 import { getCsrfTokenFromCookie, getDefaultHeaders } from './Utils';
 import { Switch } from 'react-router-dom';
 
@@ -29,7 +28,7 @@ function App() {
     .withUrl(process.env.REACT_APP_SIGNALR_HUB_URL ?? '', { accessTokenFactory: getAccessTokenSilently, headers: { 'X-XSRF-TOKEN': getCsrfTokenFromCookie() } })
     .build();
 
-  connection.on("broadcastMessage", (message: Message) => dispatch(messageReceived(message)));
+  connection.on("broadcastMessage", (message: MessageModel) => dispatch(messageReceived(message)));
   connection.on("deleteMessage", (messageId: string) => dispatch(messageDeleted(messageId)));
   connection.on("clearMessages", () => dispatch(messagesCleared()));
   connection.onreconnecting(() => dispatch(setHubConnectionState(connection.state)));

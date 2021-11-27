@@ -2,12 +2,12 @@ import React, { } from "react"
 import { useDispatch, useSelector } from "react-redux"
 import { deleteMessage, setMessageActive, } from "../../store/messages/messagesSlice";
 import { Button, TableCell, TableRow } from "@material-ui/core";
-import { Message } from "./FooTypes";
 import { useMemo } from "react";
 import { RootState } from "../..";
+import { MessageModel } from "../../apiclient";
 
 
-function MessageRow(props: { row: Message }) {
+function MessageRow(props: { row: MessageModel }) {
     const dispatch = useDispatch();
 
     const derp = useSelector((state: RootState) => state.messages.selectedMessages)

@@ -1,10 +1,9 @@
 import { Action, createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { RootState } from '../..';
-import { MessageService } from '../../apiclient';
-import { Message } from '../../Components/Messages/FooTypes';
+import { MessageModel, MessageService } from '../../apiclient';
 
 
-export const fetchPreviousMessages = createAsyncThunk<Message[]>(
+export const fetchPreviousMessages = createAsyncThunk<MessageModel[]>(
   'foo/fetchPreviousMessages',
   async (_, { getState }) => {
     const state = getState() as RootState
@@ -24,8 +23,7 @@ export const sendMessage = createAsyncThunk(
 export const deleteMessage = createAsyncThunk(
   'foo/deleteMessage',
   async (messageId: string, { }) => {
-    const response = await MessageService.deleteMessage(messageId)
-    return response as Message
+    return await MessageService.deleteMessage(messageId)
   }
 )
 
@@ -40,13 +38,13 @@ export const clearMessages = createAsyncThunk(
 const fooSlice = createSlice({
   name: 'foos',
   initialState: {
-    items: [] as Message[],
+    items: [] as MessageModel[],
     messagesLoading: false,
     clearMessagesLoading: false,
     selectedMessages: [] as string[]
   },
   reducers: {
-    messageReceived(state, action: PayloadAction<Message>) {
+    messageReceived(state, action: PayloadAction<MessageModel>) {
       state.items.push(action.payload);
     },
     messageDeleted(state, action: PayloadAction<string>) {
@@ -55,7 +53,7 @@ const fooSlice = createSlice({
     messagesCleared(state, action: Action) {
       state.items = [];
     },
-    getMessages(state, action: PayloadAction<Message[]>) {
+    getMessages(state, action: PayloadAction<MessageModel[]>) {
       state.items = action.payload
     },
     setMessageActive(state, action: PayloadAction<({ messageId: string, active: boolean })>) {

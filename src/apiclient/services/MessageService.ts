@@ -43,12 +43,12 @@ fromDate?: string,
 
     /**
      * @param messageId 
-     * @returns any Success
+     * @returns MessageModel Success
      * @throws ApiError
      */
     public static deleteMessage(
 messageId: string,
-): CancelablePromise<any> {
+): CancelablePromise<MessageModel> {
         return __request({
             method: 'DELETE',
             path: `/api/messages/${messageId}`,
