@@ -3,6 +3,7 @@
 /* eslint-disable */
 import type { MessageModel } from '../models/MessageModel';
 import type { SendMessageModel } from '../models/SendMessageModel';
+import type { CancelablePromise } from '../core/CancelablePromise';
 import { request as __request } from '../core/request';
 
 export class HubService {
@@ -12,16 +13,15 @@ export class HubService {
      * @returns MessageModel Success
      * @throws ApiError
      */
-    public static async postHubService(
+    public static postHub(
 requestBody: SendMessageModel,
-): Promise<MessageModel> {
-        const result = await __request({
+): CancelablePromise<MessageModel> {
+        return __request({
             method: 'POST',
             path: `/api/messages`,
             body: requestBody,
             mediaType: 'application/json',
         });
-        return result.body;
     }
 
     /**
@@ -29,17 +29,16 @@ requestBody: SendMessageModel,
      * @returns MessageModel Success
      * @throws ApiError
      */
-    public static async getHubService(
+    public static getHub(
 fromDate?: string,
-): Promise<Array<MessageModel>> {
-        const result = await __request({
+): CancelablePromise<Array<MessageModel>> {
+        return __request({
             method: 'GET',
             path: `/api/messages`,
             query: {
                 'fromDate': fromDate,
             },
         });
-        return result.body;
     }
 
     /**
@@ -47,26 +46,24 @@ fromDate?: string,
      * @returns any Success
      * @throws ApiError
      */
-    public static async deleteHubService(
+    public static deleteHub(
 messageId: string,
-): Promise<any> {
-        const result = await __request({
+): CancelablePromise<any> {
+        return __request({
             method: 'DELETE',
             path: `/api/messages/${messageId}`,
         });
-        return result.body;
     }
 
     /**
      * @returns any Success
      * @throws ApiError
      */
-    public static async deleteHubService1(): Promise<any> {
-        const result = await __request({
+    public static deleteHub1(): CancelablePromise<any> {
+        return __request({
             method: 'DELETE',
             path: `/api/messages/clear`,
         });
-        return result.body;
     }
 
 }
