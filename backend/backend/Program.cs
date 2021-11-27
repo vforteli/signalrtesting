@@ -58,7 +58,10 @@ public class Program
 
         app.UseStaticFiles();
 
-        app.UseCsrfValidationMiddleware();
+        if (builder.Environment.EnvironmentName != "Development")
+        {
+            app.UseCsrfValidationMiddleware();
+        }
 
         app.UseEndpoints(endpoints =>
         {
