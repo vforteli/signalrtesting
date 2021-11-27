@@ -7,11 +7,11 @@ using System.Threading.Tasks;
 namespace backend.Hubs
 {
     [Authorize]
-    public class TestHub : Hub
+    public class MessageHub : Hub
     {
         private readonly MockMessageService _messageService;
 
-        public TestHub(MockMessageService messageService)
+        public MessageHub(MockMessageService messageService)
         {
             _messageService = messageService;
         }

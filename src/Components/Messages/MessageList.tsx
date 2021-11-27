@@ -2,10 +2,10 @@ import React, { } from "react"
 import { useSelector } from "react-redux"
 import { RootState } from "../..";
 import { Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from "@material-ui/core";
-import FooRow from "./FooRow";
+import MessageRow from "./MessageRow";
 import Skeleton from '@material-ui/lab/Skeleton';
 
-function FooList() {
+function MessageList() {
     const messagesLoading = useSelector((state: RootState) => state.messages.messagesLoading);
     const items = useSelector((state: RootState) => state.messages.items);
 
@@ -24,7 +24,7 @@ function FooList() {
                     </TableHead>
                     <TableBody>
                         {items.map((row) => (
-                            <FooRow key={row.messageId} row={row} />
+                            <MessageRow key={row.messageId} row={row} />
                         ))}
                     </TableBody>
                 </Table>
@@ -32,4 +32,4 @@ function FooList() {
     )
 }
 
-export default React.memo(FooList)
+export default React.memo(MessageList)

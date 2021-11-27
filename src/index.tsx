@@ -22,11 +22,6 @@ const store = configureStore({
   middleware: [logger, ...getDefaultMiddleware()],
 })
 
-// todo supposedly material ui picks the nonce from meta by itself
-// const nonceRegex = /csp-nonce=(?<nonce>[^;]*)/
-// const match = document.cookie.match(nonceRegex)
-// const nonce = match && match.groups ? match.groups.nonce : ''
-
 export type RootState = ReturnType<typeof store.getState>;
 
 ReactDOM.render(

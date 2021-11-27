@@ -6,14 +6,14 @@ import type { SendMessageModel } from '../models/SendMessageModel';
 import type { CancelablePromise } from '../core/CancelablePromise';
 import { request as __request } from '../core/request';
 
-export class HubService {
+export class MessageService {
 
     /**
      * @param requestBody 
      * @returns MessageModel Success
      * @throws ApiError
      */
-    public static postHub(
+    public static sendMessage(
 requestBody: SendMessageModel,
 ): CancelablePromise<MessageModel> {
         return __request({
@@ -29,7 +29,7 @@ requestBody: SendMessageModel,
      * @returns MessageModel Success
      * @throws ApiError
      */
-    public static getHub(
+    public static getMessages(
 fromDate?: string,
 ): CancelablePromise<Array<MessageModel>> {
         return __request({
@@ -46,7 +46,7 @@ fromDate?: string,
      * @returns any Success
      * @throws ApiError
      */
-    public static deleteHub(
+    public static deleteMessage(
 messageId: string,
 ): CancelablePromise<any> {
         return __request({
@@ -59,7 +59,7 @@ messageId: string,
      * @returns any Success
      * @throws ApiError
      */
-    public static deleteHub1(): CancelablePromise<any> {
+    public static clearMessage(): CancelablePromise<any> {
         return __request({
             method: 'DELETE',
             path: `/api/messages/clear`,

@@ -7,7 +7,7 @@ import { useMemo } from "react";
 import { RootState } from "../..";
 
 
-function FooRow(props: { row: Message }) {
+function MessageRow(props: { row: Message }) {
     const dispatch = useDispatch();
 
     const derp = useSelector((state: RootState) => state.messages.selectedMessages)
@@ -30,4 +30,4 @@ function FooRow(props: { row: Message }) {
     )
 }
 
-export default React.memo(FooRow)
+export default React.memo(MessageRow)

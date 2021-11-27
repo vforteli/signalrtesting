@@ -1,6 +1,7 @@
 using backend.Hubs;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Mvc.Controllers;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
@@ -22,6 +23,7 @@ public class Program
             c.SchemaFilter<NullableSchemaFilter>();
             c.SupportNonNullableReferenceTypes();
             c.UseAllOfToExtendReferenceSchemas();
+            c.CustomOperationIds(o => ((ControllerActionDescriptor)o.ActionDescriptor).ActionName);
             c.SwaggerDoc("v1", new OpenApiInfo { Title = "backend", Version = "v1" });
         });
 
@@ -65,7 +67,7 @@ public class Program
 
         app.UseEndpoints(endpoints =>
         {
-            endpoints.MapHub<TestHub>("/hubs/test");
+            endpoints.MapHub<MessageHub>("/hubs/test");
         });
 
 

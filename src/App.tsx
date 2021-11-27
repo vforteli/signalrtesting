@@ -35,7 +35,7 @@ function App() {
   connection.onreconnecting(() => dispatch(setHubConnectionState(connection.state)));
   connection.onreconnected(() => {
     dispatch(setHubConnectionState(connection.state));
-    dispatch(fetchPreviousMessages());  // todo uh this should keep track of when it was disconnected and fetch messages only from this time
+    dispatch(fetchPreviousMessages());
   });
 
   useEffect(() => {

@@ -13,22 +13,21 @@ namespace backend.Controllers
 {
     [Authorize]
     [ApiController]
-    public class HubController : ControllerBase
+    public class MessageController : ControllerBase
     {
-        private readonly IHubContext<TestHub> _hubContext;
+        private readonly IHubContext<MessageHub> _hubContext;
         private readonly MockMessageService _messageService;
 
 
-        public HubController(IHubContext<TestHub> hubContext, MockMessageService messageService)
+        public MessageController(IHubContext<MessageHub> hubContext, MockMessageService messageService)
         {
             _hubContext = hubContext;
             _messageService = messageService;
         }
 
 
-
         [HttpPost("api/messages")]
-        public async Task<ActionResult<MessageModel>> PostMessage([FromBody][Required] SendMessageModel model)
+        public async Task<ActionResult<MessageModel>> SendMessage([FromBody][Required] SendMessageModel model)
         {
             var item = new MessageModel(HttpContext?.User?.Identity?.Name!, Guid.NewGuid(), model.Message, DateTime.UtcNow);
             _messageService.Messages.TryAdd(item.MessageId, item);
@@ -61,8 +60,9 @@ namespace backend.Controllers
             return Accepted();
         }
 
+
         [HttpGet("api/messages")]
-        public ActionResult<IEnumerable<MessageModel>> Messages([FromQuery] DateTime? fromDate)
+        public ActionResult<IEnumerable<MessageModel>> GetMessages([FromQuery] DateTime? fromDate)
         {
             var messages = _messageService.Messages.Select(o => o.Value);
             if (fromDate.HasValue)

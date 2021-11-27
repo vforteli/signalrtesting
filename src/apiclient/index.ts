@@ -9,4 +9,4 @@ export type { MessageModel } from './models/MessageModel';
 export type { SendMessageModel } from './models/SendMessageModel';
 
 export { HeadersService } from './services/HeadersService';
-export { HubService } from './services/HubService';
+export { MessageService } from './services/MessageService';

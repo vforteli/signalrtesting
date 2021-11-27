@@ -1,6 +1,6 @@
 import { Action, createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { RootState } from '../..';
-import { HubService } from '../../apiclient';
+import { MessageService } from '../../apiclient';
 import { Message } from '../../Components/Messages/FooTypes';
 
 
@@ -8,16 +8,15 @@ export const fetchPreviousMessages = createAsyncThunk<Message[]>(
   'foo/fetchPreviousMessages',
   async (_, { getState }) => {
     const state = getState() as RootState
-    const fromDateQuery = state.messages.items.length > 0 ? `fromDate=${state.messages.items[state.messages.items.length - 1].timeSent}` : '';
-
-    return await HubService.getHub(fromDateQuery)
+    const fromDateQuery = state.messages.items.length > 0 ? state.messages.items[state.messages.items.length - 1].timeSent : '';
+    return await MessageService.getMessages(fromDateQuery)
   }
 )
 
 export const sendMessage = createAsyncThunk(
   'foo/sendMessage',
   async (message: string, { }) => {
-    const response = await HubService.postHub({ message: message })
+    const response = await MessageService.sendMessage({ message: message })
     return response
   }
 )
@@ -25,7 +24,7 @@ export const sendMessage = createAsyncThunk(
 export const deleteMessage = createAsyncThunk(
   'foo/deleteMessage',
   async (messageId: string, { }) => {
-    const response = await HubService.deleteHub(messageId)
+    const response = await MessageService.deleteMessage(messageId)
     return response as Message
   }
 )
@@ -33,7 +32,7 @@ export const deleteMessage = createAsyncThunk(
 export const clearMessages = createAsyncThunk(
   'foo/clearMessages',
   async (_, { }) => {
-    const response = await HubService.deleteHub1();  // todo this is generated with the wrong name...    
+    const response = await MessageService.clearMessage();
     return response
   }
 )

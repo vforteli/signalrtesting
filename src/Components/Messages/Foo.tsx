@@ -1,5 +1,5 @@
 import React, { useEffect } from "react"
-import FooList from "./FooList";
+import MessageList from "./MessageList";
 import FooForm from "./FooForm";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchPreviousMessages } from "../../store/messages/messagesSlice";
@@ -22,7 +22,7 @@ function Foo() {
             <FooForm />
             <br />
             <br />
-            <FooList />
+            <MessageList />
         </>
     )
 }
