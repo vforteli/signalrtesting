@@ -16,7 +16,7 @@ import PrivateRoute from './Components/Auth/PrivateRoute';
 import { Message } from './Components/Messages/FooTypes';
 import { Container, CssBaseline } from '@material-ui/core';
 import { OpenAPI } from './apiclient';
-import { getCsrfTokenFromCookie } from './Utils';
+import { getCsrfTokenFromCookie, getDefaultHeaders } from './Utils';
 import { Switch } from 'react-router-dom';
 
 
@@ -41,11 +41,10 @@ function App() {
   useEffect(() => {
     if (isAuthenticated) {
       (async () => {
-        const token = await getAccessTokenSilently();
         OpenAPI.BASE = process.env.REACT_APP_BACKEND_URL ?? ''
-        OpenAPI.TOKEN = token
-        OpenAPI.HEADERS = { 'X-XSRF-TOKEN': getCsrfTokenFromCookie() }
-        dispatch(setCurrentUser({ accessToken: token, isLoggedIn: isAuthenticated, username: user?.name ?? '' }))
+        OpenAPI.TOKEN = getAccessTokenSilently
+        OpenAPI.HEADERS = getDefaultHeaders
+        dispatch(setCurrentUser({ isLoggedIn: isAuthenticated, username: user?.name ?? '' }))
       })();
 
       dispatch(setHubConnectionState(HubConnectionState.Connecting));

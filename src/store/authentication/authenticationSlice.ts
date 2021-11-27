@@ -3,7 +3,6 @@ import { Action, createSlice, PayloadAction } from '@reduxjs/toolkit'
 
 export interface IAuthenticationState {
     username: string;
-    accessToken: string;
     isLoggedIn: boolean;
 }
 
@@ -11,7 +10,6 @@ export interface IAuthenticationState {
 const authenticationSlice = createSlice({
     name: 'signalr',
     initialState: {
-        accessToken: '',
         isLoggedIn: false,
         username: ''
     } as IAuthenticationState,

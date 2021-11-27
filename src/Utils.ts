@@ -3,3 +3,7 @@ export const getCsrfTokenFromCookie = () => {
     const match = document.cookie.match(regex)
     return match && match.groups ? match.groups.csrfToken : ''
 }
+
+export const getDefaultHeaders = (): Promise<Record<string, string>> => {
+    return Promise.resolve({ 'X-XSRF-TOKEN': getCsrfTokenFromCookie() })
+}
