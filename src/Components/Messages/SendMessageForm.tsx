@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { HubConnectionState } from "@microsoft/signalr";
 import { clearMessages, sendMessage } from "../../store/messages/messagesSlice";
 import { RootState } from "../..";
-import { Button, Input } from "@material-ui/core";
+import { Button, Input } from "@mui/material";
 
 
 function SendMessageForm() {

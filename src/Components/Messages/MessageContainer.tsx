@@ -4,8 +4,8 @@ import SendMessageForm from "./SendMessageForm";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchPreviousMessages } from "../../store/messages/messagesSlice";
 import { RootState } from "../..";
-import { FormControlLabel, FormGroup, Switch } from "@material-ui/core";
 import { getNotificationEnabled, setNotificationEnabled } from "../../store/app/appSlice";
+import { FormGroup, FormControlLabel, Switch } from "@mui/material";
 
 
 function MessageContainer() {

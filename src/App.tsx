@@ -12,10 +12,10 @@ import Bar from './Components/Bar/Bar';
 import { Route } from 'react-router-dom';
 import Front from './Components/Front/Front';
 import PrivateRoute from './Components/Auth/PrivateRoute';
-import { Container, CssBaseline } from '@material-ui/core';
 import { MessageModel, OpenAPI } from './apiclient';
 import { getCsrfTokenFromCookie, getDefaultHeaders } from './Utils';
 import { Switch } from 'react-router-dom';
+import { Container, CssBaseline } from '@mui/material';
 
 
 function App() {
@@ -64,7 +64,7 @@ function App() {
 
       <AppHeader />
 
-      <Container>
+      <Container sx={{ bgcolor: '#eeeeee' }}>
         <Switch>
           <Route path="/" exact component={Front} />
           <PrivateRoute path="/foo" component={MessageContainer} />

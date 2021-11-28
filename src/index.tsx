@@ -11,6 +11,7 @@ import authenticationSlice from './store/authentication/authenticationSlice';
 import logger from 'redux-logger'
 import { BrowserRouter } from 'react-router-dom';
 import appSlice from './store/app/appSlice';
+import { createTheme, ThemeProvider } from '@mui/material';
 
 
 const store = configureStore({
@@ -22,6 +23,8 @@ const store = configureStore({
   },
   middleware: [logger, ...getDefaultMiddleware()],
 })
+
+const theme = createTheme();
 
 export type RootState = ReturnType<typeof store.getState>;
 
@@ -37,7 +40,9 @@ ReactDOM.render(
           cacheLocation='localstorage'
           scope='openid profile email'
         >
-          <App />
+          <ThemeProvider theme={theme}>
+            <App />
+          </ThemeProvider>
         </Auth0Provider>
       </BrowserRouter>
     </Provider>
