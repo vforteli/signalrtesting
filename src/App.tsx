@@ -1,6 +1,5 @@
 import { useEffect } from 'react';
-import './App.css';
-import Foo from './Components/Messages/Foo';
+import MessageContainer from './Components/Messages/MessageContainer';
 import { useAuth0 } from "@auth0/auth0-react";
 import AppHeader from './Components/Header/Header';
 import { useDispatch } from 'react-redux';
@@ -68,7 +67,7 @@ function App() {
       <Container>
         <Switch>
           <Route path="/" exact component={Front} />
-          <PrivateRoute path="/foo" component={Foo} />
+          <PrivateRoute path="/foo" component={MessageContainer} />
           <Route path="/bar" component={Bar} />
         </Switch>
       </Container>

@@ -1,6 +1,5 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 import { Auth0Provider } from '@auth0/auth0-react';
@@ -11,6 +10,7 @@ import signalrSlice from './store/messages/signalrSlice';
 import authenticationSlice from './store/authentication/authenticationSlice';
 import logger from 'redux-logger'
 import { BrowserRouter } from 'react-router-dom';
+import appSlice from './store/app/appSlice';
 
 
 const store = configureStore({
@@ -18,6 +18,7 @@ const store = configureStore({
     messages: fooSlice,
     foohub: signalrSlice,
     currentUser: authenticationSlice,
+    app: appSlice,
   },
   middleware: [logger, ...getDefaultMiddleware()],
 })

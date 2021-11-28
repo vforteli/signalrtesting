@@ -6,7 +6,7 @@ import { RootState } from "../..";
 import { Button, Input } from "@material-ui/core";
 
 
-function FooForm() {
+function SendMessageForm() {
     const dispatch = useDispatch();
     const [message, setMessage] = useState('');
     const hubState = useSelector((state: RootState) => state.foohub.connectionState);
@@ -35,4 +35,4 @@ function FooForm() {
     )
 }
 
-export default React.memo(FooForm)
+export default React.memo(SendMessageForm)
