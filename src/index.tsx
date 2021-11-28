@@ -5,7 +5,7 @@ import reportWebVitals from './reportWebVitals';
 import { Auth0Provider } from '@auth0/auth0-react';
 import { configureStore, getDefaultMiddleware } from '@reduxjs/toolkit';
 import { Provider } from 'react-redux'
-import fooSlice from './store/messages/messagesSlice';
+import messagesSlice from './store/messages/messagesSlice';
 import signalrSlice from './store/messages/signalrSlice';
 import authenticationSlice from './store/authentication/authenticationSlice';
 import logger from 'redux-logger'
@@ -15,7 +15,7 @@ import appSlice from './store/app/appSlice';
 
 const store = configureStore({
   reducer: {
-    messages: fooSlice,
+    messages: messagesSlice,
     foohub: signalrSlice,
     currentUser: authenticationSlice,
     app: appSlice,

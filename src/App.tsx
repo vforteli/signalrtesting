@@ -42,7 +42,7 @@ function App() {
         OpenAPI.BASE = process.env.REACT_APP_BACKEND_URL ?? ''
         OpenAPI.TOKEN = getAccessTokenSilently
         OpenAPI.HEADERS = getDefaultHeaders
-        dispatch(setCurrentUser({ isLoggedIn: isAuthenticated, username: user?.name ?? '' }))
+        dispatch(setCurrentUser({ isLoggedIn: isAuthenticated, username: user?.name ?? '', user: user }))
       })();
 
       dispatch(setHubConnectionState(HubConnectionState.Connecting));

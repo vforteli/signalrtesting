@@ -15,8 +15,8 @@ function MessageRow(props: { row: MessageModel }) {
 
     // const active = useSelector((state: RootState) => state.messages.selectedMessages.includes(props.row.messageId))
 
-    console.debug('foo' + props.row.messageId)
-    console.debug(active)
+    // console.debug('foo' + props.row.messageId)
+    // console.debug(active)
 
     return useMemo(() =>
         <TableRow key={props.row.messageId}>

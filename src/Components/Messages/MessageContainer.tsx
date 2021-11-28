@@ -5,7 +5,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { fetchPreviousMessages } from "../../store/messages/messagesSlice";
 import { RootState } from "../..";
 import { FormControlLabel, FormGroup, Switch } from "@material-ui/core";
-import { setNotificationEnabled } from "../../store/app/appSlice";
+import { getNotificationEnabled, setNotificationEnabled } from "../../store/app/appSlice";
 
 
 function MessageContainer() {
@@ -18,6 +18,7 @@ function MessageContainer() {
         if (isLoggedIn) {
             // should this be called every time the page is opened? this decision depends on if the hub should be disconnected when leaving the page
             dispatch(fetchPreviousMessages());
+            dispatch(getNotificationEnabled())
         }
     }, [dispatch, isLoggedIn]);
 

@@ -3,40 +3,39 @@ import { RootState } from '../..';
 import { MessageModel, MessageService } from '../../apiclient';
 
 
-export const fetchPreviousMessages = createAsyncThunk<MessageModel[]>(
-  'foo/fetchPreviousMessages',
-  async (_, { getState }) => {
-    const state = getState() as RootState
-    const fromDateQuery = state.messages.items.length > 0 ? state.messages.items[state.messages.items.length - 1].timeSent : '';
-    return await MessageService.getMessages(fromDateQuery)
-  }
-)
+export const fetchPreviousMessages = createAsyncThunk<MessageModel[]>('messages/fetchPreviousMessages', async (_, { getState }) => {
+  const state = getState() as RootState
+  const fromDateQuery = state.messages.items.length > 0 ? state.messages.items[state.messages.items.length - 1].timeSent : '';
+  return await MessageService.getMessages(fromDateQuery)
+})
 
-export const sendMessage = createAsyncThunk(
-  'foo/sendMessage',
-  async (message: string, { }) => {
-    const response = await MessageService.sendMessage({ message: message })
-    return response
-  }
-)
+export const sendMessage = createAsyncThunk('messages/sendMessage', async (message: string, { }) => {
+  return await MessageService.sendMessage({ message: message })
+})
 
-export const deleteMessage = createAsyncThunk(
-  'foo/deleteMessage',
-  async (messageId: string, { }) => {
-    return await MessageService.deleteMessage(messageId)
-  }
-)
+export const deleteMessage = createAsyncThunk('messages/deleteMessage', async (messageId: string, { }) => {
+  return await MessageService.deleteMessage(messageId)
+})
 
-export const clearMessages = createAsyncThunk(
-  'foo/clearMessages',
-  async (_, { }) => {
-    const response = await MessageService.clearMessage();
-    return response
-  }
-)
+export const clearMessages = createAsyncThunk('messages/clearMessages', async (_, { }) => {
+  return await MessageService.clearMessage()
+})
 
-const fooSlice = createSlice({
-  name: 'foos',
+export const messageReceived = createAsyncThunk('messages/messageReceived', async (message: MessageModel, { getState }) => {
+  const state = getState() as RootState
+
+  if (message.name !== state.currentUser.user?.sub) { // todo extremely ugly way of ignoring broadcasted messages from self, this should be fixed in backend :D
+    if (state.app.notificationsEnabled) {
+      new Notification(message.message);
+    }
+    return message
+  }
+})
+
+
+
+const messagesSlice = createSlice({
+  name: 'messages',
   initialState: {
     items: [] as MessageModel[],
     messagesLoading: false,
@@ -44,9 +43,6 @@ const fooSlice = createSlice({
     selectedMessages: [] as string[]
   },
   reducers: {
-    messageReceived(state, action: PayloadAction<MessageModel>) {
-      state.items.push(action.payload);
-    },
     messageDeleted(state, action: PayloadAction<string>) {
       state.items = state.items.filter(o => o.messageId !== action.payload);
     },
@@ -66,6 +62,25 @@ const fooSlice = createSlice({
     }
   },
   extraReducers: (builder) => {
+    builder.addCase(messageReceived.fulfilled, (state, action) => {
+      if (action.payload) {
+        state.items.push(action.payload);
+      }
+    });
+
+    builder.addCase(sendMessage.pending, (state, action) => {
+      state.items.push({ message: action.meta.arg, messageId: 'pending', name: '', timeSent: '' });
+    });
+    builder.addCase(sendMessage.fulfilled, (state, action) => {
+      const index = state.items.findIndex(o => o.messageId === 'pending')
+      state.items[index] = action.payload
+    });
+    builder.addCase(sendMessage.rejected, (state, action) => {
+      // todo this should mark the message as send failed
+      // currently it is just removed because im lazy
+      state.items = state.items.filter(o => o.messageId !== 'pending')
+    });
+
     builder.addCase(fetchPreviousMessages.pending, (state) => {
       state.messagesLoading = true;
     });
@@ -104,11 +119,10 @@ const fooSlice = createSlice({
 })
 
 export const {
-  messageReceived,
   messagesCleared,
   messageDeleted,
   getMessages,
   setMessageActive
-} = fooSlice.actions
+} = messagesSlice.actions
 
-export default fooSlice.reducer
+export default messagesSlice.reducer
