@@ -9,15 +9,15 @@ export const fetchPreviousMessages = createAsyncThunk<MessageModel[]>('messages/
   return await MessageService.getMessages(fromDateQuery)
 })
 
-export const sendMessage = createAsyncThunk('messages/sendMessage', async (message: string, { }) => {
+export const sendMessage = createAsyncThunk('messages/sendMessage', async (message: string) => {
   return await MessageService.sendMessage({ message: message })
 })
 
-export const deleteMessage = createAsyncThunk('messages/deleteMessage', async (messageId: string, { }) => {
+export const deleteMessage = createAsyncThunk('messages/deleteMessage', async (messageId: string) => {
   return await MessageService.deleteMessage(messageId)
 })
 
-export const clearMessages = createAsyncThunk('messages/clearMessages', async (_, { }) => {
+export const clearMessages = createAsyncThunk('messages/clearMessages', async () => {
   return await MessageService.clearMessage()
 })
 
@@ -46,7 +46,7 @@ const messagesSlice = createSlice({
     messageDeleted(state, action: PayloadAction<string>) {
       state.items = state.items.filter(o => o.messageId !== action.payload);
     },
-    messagesCleared(state, action: Action) {
+    messagesCleared(state) {
       state.items = [];
     },
     getMessages(state, action: PayloadAction<MessageModel[]>) {

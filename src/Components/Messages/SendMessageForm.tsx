@@ -1,7 +1,7 @@
 import React, { useState } from "react"
 import { useDispatch, useSelector } from "react-redux";
 import { HubConnectionState } from "@microsoft/signalr";
-import { clearMessages, sendMessage } from "../../store/messages/messagesSlice";
+import { sendMessage } from "../../store/messages/messagesSlice";
 import { RootState } from "../..";
 import { Button, Input } from "@mui/material";
 
@@ -10,7 +10,6 @@ function SendMessageForm() {
     const dispatch = useDispatch();
     const [message, setMessage] = useState('');
     const hubState = useSelector((state: RootState) => state.foohub.connectionState);
-    const clearMessagesLoading = useSelector((state: RootState) => state.messages.clearMessagesLoading);
 
     const handleSendMessage = () => {
         if (message.length > 0) {
@@ -30,7 +29,6 @@ function SendMessageForm() {
         <>
             <Input type="text" disabled={hubState !== HubConnectionState.Connected} onChange={(e) => setMessage(e.target.value)} value={message} onKeyDown={e => handleKeyPress(e)}></Input>
             <Button onClick={() => handleSendMessage()} disabled={hubState !== HubConnectionState.Connected}>Send</Button>
-            <Button onClick={() => dispatch(clearMessages())} disabled={hubState !== HubConnectionState.Connected || clearMessagesLoading}>Clear all</Button>
         </>
     )
 }

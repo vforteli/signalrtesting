@@ -31,7 +31,7 @@ namespace backend
 
             context.Response.ContentType = "text/html";
             await context.Response.WriteAsync(_options.IndexFileContent.Replace("{{nonce}}", cspNonce));
-            await context.Response.CompleteAsync();
+            await context.Response.CompleteAsync();            
         }
     }
 

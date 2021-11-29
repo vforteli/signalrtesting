@@ -2,16 +2,19 @@ import React, { useEffect } from "react"
 import MessageList from "./MessageList";
 import SendMessageForm from "./SendMessageForm";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchPreviousMessages } from "../../store/messages/messagesSlice";
+import { clearMessages, fetchPreviousMessages } from "../../store/messages/messagesSlice";
 import { RootState } from "../..";
 import { getNotificationEnabled, setNotificationEnabled } from "../../store/app/appSlice";
-import { FormGroup, FormControlLabel, Switch } from "@mui/material";
+import { FormGroup, FormControlLabel, Switch, Box, Button } from "@mui/material";
+import { HubConnectionState } from "@microsoft/signalr";
 
 
 function MessageContainer() {
     const dispatch = useDispatch()
     const isLoggedIn = useSelector((state: RootState) => state.currentUser.isLoggedIn);
     const isNotificationsEnabled = useSelector((state: RootState) => state.app.notificationsEnabled)
+    const hubState = useSelector((state: RootState) => state.foohub.connectionState);
+    const clearMessagesLoading = useSelector((state: RootState) => state.messages.clearMessagesLoading);
 
 
     useEffect(() => {
@@ -26,11 +29,17 @@ function MessageContainer() {
         <>
             <FormGroup>
                 <FormControlLabel control={<Switch checked={isNotificationsEnabled} onChange={e => dispatch(setNotificationEnabled(e.target.checked))} />} label="Notifications" />
+                <Button onClick={() => dispatch(clearMessages())} disabled={hubState !== HubConnectionState.Connected || clearMessagesLoading}>Clear all</Button>
             </FormGroup>
-            <SendMessageForm />
+
             <br />
             <br />
-            <MessageList />
+            <Box sx={{ paddingBottom: '5em' }}>
+                <MessageList />
+            </Box>
+            <footer style={{ color: "black", position: "fixed", backgroundColor: '#dddddd', bottom: 0, height: '5em', borderTop: 1 }}>
+                <SendMessageForm />
+            </footer>
         </>
     )
 }

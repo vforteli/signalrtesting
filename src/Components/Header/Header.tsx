@@ -3,24 +3,11 @@ import { useAuth0 } from "@auth0/auth0-react";
 import { useDispatch } from 'react-redux';
 import { clearCurrentUser } from '../../store/authentication/authenticationSlice';
 import { Link } from 'react-router-dom';
-import { AppBar, Button, IconButton, makeStyles, Toolbar } from '@mui/material';
-
-// const useStyles = makeStyles((theme: any) => ({
-//     root: {
-//         flexGrow: 1,
-//     },
-//     menuButton: {
-//         marginRight: theme.spacing(2),
-//     },
-//     title: {
-//         flexGrow: 1,
-//     },
-// }));
+import { AppBar, Button, IconButton, Toolbar } from '@mui/material';
 
 function AppHeader() {
     const dispatch = useDispatch();
     const { loginWithRedirect, isAuthenticated, logout } = useAuth0();
-    // const classes = useStyles();
 
     const handleLogout = () => {
         dispatch(clearCurrentUser());
@@ -28,7 +15,7 @@ function AppHeader() {
     }
 
     return (
-        <AppBar position="static">
+        <AppBar position="sticky">
             <Toolbar>
                 <IconButton edge="start" color="inherit" aria-label="menu">
                     <Link to="/">Front</Link>

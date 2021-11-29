@@ -2,12 +2,9 @@ import React, { useEffect, useState } from "react"
 import { useSelector } from "react-redux";
 import { RootState } from "..";
 import { HubConnectionState } from "@microsoft/signalr";
-import { IconButton, Slide, Snackbar } from "@mui/material";
-import { TransitionProps } from "@mui/material/transitions";
+import { IconButton, Slide, SlideProps, Snackbar } from "@mui/material";
 
-// function SlideTransition(props: TransitionProps) {
-//     return <Slide {...props} direction="down" />;
-// }
+const SlideTransition = (props: SlideProps) => <Slide {...props} direction="down" />
 
 function HubNotificationMessage() {
     const connectionState = useSelector((state: RootState) => state.foohub.connectionState);
@@ -40,7 +37,7 @@ function HubNotificationMessage() {
             autoHideDuration={timeout}
             onClose={handleClose}
             message={message}
-            // TransitionComponent={SlideTransition}
+            TransitionComponent={SlideTransition}
             action={<IconButton aria-label="close" color="inherit" onClick={handleClose} />}
         />)
 }
