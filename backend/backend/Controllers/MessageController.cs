@@ -29,11 +29,11 @@ namespace backend.Controllers
         [HttpPost("api/messages")]
         public async Task<ActionResult<MessageModel>> SendMessage([FromBody][Required] SendMessageModel model)
         {
-            var item = new MessageModel(HttpContext?.User?.Identity?.Name!, Guid.NewGuid(), model.Message, DateTime.UtcNow);
-            _messageService.Messages.TryAdd(item.MessageId, item);
-            await _hubContext.Clients.All.SendAsync("broadcastMessage", item);
+            var message = new MessageModel(HttpContext?.User?.Identity?.Name!, Guid.NewGuid(), model.Message, DateTime.UtcNow);
+            _messageService.Messages.TryAdd(message.MessageId, message);
+            await _hubContext.Clients.All.SendAsync("broadcastMessage", message);
 
-            return item;
+            return message;
         }
 
 
