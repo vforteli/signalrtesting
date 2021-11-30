@@ -32,6 +32,10 @@ export const messageReceived = createAsyncThunk('messages/messageReceived', asyn
   }
 })
 
+export const indicateTyping = createAsyncThunk('messages/indicateTyping', async (chatId: string) => {
+  return await MessageService.indicateTyping(chatId)
+})
+
 
 
 const messagesSlice = createSlice({

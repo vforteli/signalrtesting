@@ -30,6 +30,10 @@ function App() {
   connection.on("broadcastMessage", (message: MessageModel) => dispatch(messageReceived(message)));
   connection.on("deleteMessage", (messageId: string) => dispatch(messageDeleted(messageId)));
   connection.on("clearMessages", () => dispatch(messagesCleared()));
+  connection.on("indicateTyping", (chatId: string) => {
+    console.debug(`someone is typing in chat: ${chatId}`)
+    setTimeout(() => { console.debug(`someone maybe stopped typing in chat: ${chatId}?`) }, 3000)
+  });
   connection.onreconnecting(() => dispatch(setHubConnectionState(connection.state)));
   connection.onreconnected(() => {
     dispatch(setHubConnectionState(connection.state));

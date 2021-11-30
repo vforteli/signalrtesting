@@ -36,7 +36,7 @@ function MessageContainer() {
             <Box sx={{ paddingBottom: '5em' }}>
                 <MessageList />
             </Box>
-            <Box sx={{ position: 'fixed', bottom: 0, height: '5em', backgroundColor: '#ddd', width: '100%', left: '0px' }}>
+            <Box sx={{ position: 'fixed', bottom: 0, height: '4em', backgroundColor: '#ddd', width: '100%', left: '0px' }}>
                 <SendMessageForm />
             </Box>
         </>

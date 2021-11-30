@@ -1,7 +1,7 @@
 import React, { useState } from "react"
 import { useDispatch, useSelector } from "react-redux";
 import { HubConnectionState } from "@microsoft/signalr";
-import { sendMessage } from "../../store/messages/messagesSlice";
+import { indicateTyping, sendMessage } from "../../store/messages/messagesSlice";
 import { RootState } from "../..";
 import { Divider, IconButton, InputBase, Paper } from "@mui/material";
 import SendIcon from '@mui/icons-material/Send';
@@ -20,8 +20,14 @@ function SendMessageForm() {
     }
 
     const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+
+
         if (e.key === 'Enter') {
             handleSendMessage();
+        }
+        else {
+            // this should be debounced
+            dispatch(indicateTyping('00000000-0000-0000-0000-000000000000'))
         }
     }
 

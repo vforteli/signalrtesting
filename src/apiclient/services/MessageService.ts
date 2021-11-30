@@ -66,4 +66,18 @@ messageId: string,
         });
     }
 
+    /**
+     * @param chatId 
+     * @returns any Success
+     * @throws ApiError
+     */
+    public static indicateTyping(
+chatId: string,
+): CancelablePromise<any> {
+        return __request({
+            method: 'POST',
+            path: `/api/indicateTyping/${chatId}`,
+        });
+    }
+
 }

@@ -72,5 +72,16 @@ namespace backend.Controllers
 
             return messages.OrderBy(o => o.TimeSent).ToList();
         }
+
+
+
+        [HttpPost("api/indicateTyping/{chatId}")]
+        public async Task<ActionResult> IndicateTyping([FromRoute] Guid chatId)
+        {
+            // todo move this to hub
+            // todo enable throttling?
+            await _hubContext.Clients.All.SendAsync("indicateTyping", chatId);
+            return Accepted();
+        }
     }
 }
