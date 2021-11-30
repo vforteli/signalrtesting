@@ -13,9 +13,8 @@ function MessageContainer() {
     const dispatch = useDispatch()
     const isLoggedIn = useSelector((state: RootState) => state.currentUser.isLoggedIn);
     const isNotificationsEnabled = useSelector((state: RootState) => state.app.notificationsEnabled)
-    const hubState = useSelector((state: RootState) => state.foohub.connectionState);
+    const hubState = useSelector((state: RootState) => state.signalr.connectionState);
     const clearMessagesLoading = useSelector((state: RootState) => state.messages.clearMessagesLoading);
-
 
     useEffect(() => {
         if (isLoggedIn) {
@@ -37,9 +36,9 @@ function MessageContainer() {
             <Box sx={{ paddingBottom: '5em' }}>
                 <MessageList />
             </Box>
-            <footer style={{ color: "black", position: "fixed", backgroundColor: '#dddddd', bottom: 0, height: '5em', borderTop: 1 }}>
+            <Box sx={{ position: 'fixed', bottom: 0, height: '5em', backgroundColor: '#ddd', width: '100%', left: '0px' }}>
                 <SendMessageForm />
-            </footer>
+            </Box>
         </>
     )
 }

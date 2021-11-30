@@ -12,17 +12,26 @@ import logger from 'redux-logger'
 import { BrowserRouter } from 'react-router-dom';
 import appSlice from './store/app/appSlice';
 import { createTheme, ThemeProvider } from '@mui/material';
+import { getNonceFromCookie } from './Utils';
+import createCache from '@emotion/cache';
+import { CacheProvider } from '@emotion/react';
 
 
 const store = configureStore({
   reducer: {
     messages: messagesSlice,
-    foohub: signalrSlice,
+    signalr: signalrSlice,
     currentUser: authenticationSlice,
     app: appSlice,
   },
   middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(logger)
 })
+
+const cache = createCache({
+  key: 'app',
+  nonce: getNonceFromCookie(),
+  prepend: true,
+});
 
 const theme = createTheme();
 
@@ -40,9 +49,11 @@ ReactDOM.render(
           cacheLocation='localstorage'
           scope='openid profile email'
         >
-          <ThemeProvider theme={theme}>
-            <App />
-          </ThemeProvider>
+          <CacheProvider value={cache}>
+            <ThemeProvider theme={theme}>
+              <App />
+            </ThemeProvider>
+          </CacheProvider>
         </Auth0Provider>
       </BrowserRouter>
     </Provider>

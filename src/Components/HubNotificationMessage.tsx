@@ -7,7 +7,7 @@ import { IconButton, Slide, SlideProps, Snackbar } from "@mui/material";
 const SlideTransition = (props: SlideProps) => <Slide {...props} direction="down" />
 
 function HubNotificationMessage() {
-    const connectionState = useSelector((state: RootState) => state.foohub.connectionState);
+    const connectionState = useSelector((state: RootState) => state.signalr.connectionState);
     const [message, setMessage] = useState('')
     const [timeout, setTimeout] = useState<number | null>()
     const [open, setOpen] = useState(false)

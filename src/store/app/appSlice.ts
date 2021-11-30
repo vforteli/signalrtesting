@@ -17,7 +17,12 @@ export const setNotificationEnabled = createAsyncThunk('app/setNotificationEnabl
         }
     }
 
-    localStorage.setItem(notificationEnabledKey, String(enabled))
+    if (enabled) {
+        localStorage.setItem(notificationEnabledKey, String(enabled))
+    }
+    else {
+        localStorage.removeItem(notificationEnabledKey)
+    }
     return enabled
 })
 
@@ -25,6 +30,7 @@ export const setNotificationEnabled = createAsyncThunk('app/setNotificationEnabl
 export const getNotificationEnabled = createAsyncThunk('app/getNotificationEnabled', async (_, { getState }) => {
     const state = getState() as RootState
     const enabled = Boolean(localStorage.getItem(notificationEnabledKey))
+    console.warn(enabled)
     if (enabled && !state.app.notificationPermissionGiven) {
         const permission = await Notification.requestPermission()
         if (permission === 'denied') {
