@@ -8,5 +8,5 @@ public interface IMessageHub
     Task BroadcastMessage(MessageModel message);
     Task AckMessage(Guid messageId);
     Task DeleteMessage(Guid messageId);
-    Task IndicateTyping(Guid chatId);
+    Task IndicateTyping(Guid chatId, string username);
 }

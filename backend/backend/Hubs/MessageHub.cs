@@ -35,5 +35,13 @@ namespace backend.Hubs
             _messageService.Messages.TryRemove(messageId, out _);
             return Clients.All.DeleteMessage(messageId);
         }
+
+        [HubMethodName("indicateTyping")]
+        public Task IndicateTyping(Guid chatId)
+        {
+            // todo this should use some id
+            // todo this should send to others in group based on chat id
+            return Clients.Others.IndicateTyping(chatId, Context?.User?.Identity?.Name!);
+        }
     }
 }

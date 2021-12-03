@@ -32,19 +32,15 @@ export const messageReceived = createAsyncThunk('messages/messageReceived', asyn
   }
 })
 
-export const indicateTyping = createAsyncThunk('messages/indicateTyping', async (chatId: string) => {
-  return await MessageService.indicateTyping(chatId)
-})
-
-
-
 const messagesSlice = createSlice({
   name: 'messages',
   initialState: {
     items: [] as MessageModel[],
     messagesLoading: false,
     clearMessagesLoading: false,
-    selectedMessages: [] as string[]
+    selectedMessages: [] as string[],
+    typing: false,   // this should actually be an object with chatid and userid
+    typingUser: '', // todo fix....
   },
   reducers: {
     messageDeleted(state, action: PayloadAction<string>) {
@@ -63,11 +59,16 @@ const messagesSlice = createSlice({
       else if (!action.payload.active && state.selectedMessages.includes(action.payload.messageId)) {
         state.selectedMessages = state.selectedMessages.filter(o => o !== action.payload.messageId);
       }
-    }
+    },
+    setTyping(state, action: PayloadAction<({ chatId: string, userId: string, typing: boolean })>) {
+      state.typing = action.payload.typing
+      state.typingUser = action.payload.userId
+    },
   },
   extraReducers: (builder) => {
     builder.addCase(messageReceived.fulfilled, (state, action) => {
       if (action.payload) {
+        state.typing = false
         state.items.push(action.payload);
       }
     });
@@ -126,7 +127,8 @@ export const {
   messagesCleared,
   messageDeleted,
   getMessages,
-  setMessageActive
+  setMessageActive,
+  setTyping,
 } = messagesSlice.actions
 
 export default messagesSlice.reducer

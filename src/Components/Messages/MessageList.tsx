@@ -3,8 +3,11 @@ import { useSelector } from "react-redux"
 import { RootState } from "../..";
 import MessageRow from "./MessageRow";
 import { Grid, Skeleton } from "@mui/material";
+import TypingIndicator from "./TypingIndicator";
 
 function MessageList() {
+    const chatId = '42'
+
     const messagesLoading = useSelector((state: RootState) => state.messages.messagesLoading)
     const items = useSelector((state: RootState) => state.messages.items)
     const ref = useRef<null | HTMLDivElement>(null)
@@ -22,6 +25,7 @@ function MessageList() {
             ? <Skeleton animation="wave" />
             : <Grid>
                 {items.map((row) => <MessageRow key={row.messageId} row={row} />)}
+                <TypingIndicator chatId={chatId} />
                 <div ref={ref}></div>
             </Grid>
     )
