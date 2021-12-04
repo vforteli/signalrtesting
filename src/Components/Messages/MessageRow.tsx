@@ -12,8 +12,15 @@ function MessageRow(props: { row: MessageModel }) {
     const dispatch = useDispatch();
 
     const selectedMessages = useSelector((state: RootState) => state.messages.selectedMessages)
+    const messageAcked = useSelector((state: RootState) => state.messages.ackedMessages[props.row.messageId] ?? false)
     const user = useSelector((state: RootState) => state.currentUser.user)
     const active = selectedMessages.includes(props.row.messageId)
+
+    const status = messageAcked
+        ? 2
+        : props.row.timeSent
+            ? 1
+            : 0
 
     const ownMessage = props.row.userId === user?.sub || props.row.userId === ''
     const derp: SxProps<Theme> = { bgcolor: 'info.main', color: 'info.contrastText' }
@@ -31,7 +38,7 @@ function MessageRow(props: { row: MessageModel }) {
                     {/* <small>{props.row.timeSent}</small> */}
                     <Button onClick={() => dispatch(deleteMessage(props.row.messageId))}> Delete</Button>
                     <Button onClick={() => dispatch(setMessageActive({ active: !active, messageId: props.row.messageId }))}>{active ? 'active' : 'nope'}</Button>
-                    {ownMessage && <DeliveryStatusIcon status={props.row.timeSent ? 1 : 0} />}
+                    {ownMessage && <DeliveryStatusIcon status={status} />}
                 </CardActions>
             </Card>
         </Box>)

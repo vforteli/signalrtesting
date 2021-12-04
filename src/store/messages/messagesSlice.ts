@@ -33,8 +33,12 @@ const messagesSlice = createSlice({
     clearMessagesLoading: false,
     selectedMessages: [] as string[],
     typing: {} as Record<string, Record<string, boolean>>,
+    ackedMessages: {} as Record<string, boolean>, // todo mhmhmmm..
   },
   reducers: {
+    setMessageAcked(state, action: PayloadAction<({ messageId: string, acked: boolean })>) {
+      state.ackedMessages[action.payload.messageId] = action.payload.acked
+    },
     messageDeleted(state, action: PayloadAction<string>) {
       state.items = state.items.filter(o => o.messageId !== action.payload);
     },
@@ -135,6 +139,7 @@ export const {
   setTyping,
   sendMessage,
   sendMessageFulfilled,
+  setMessageAcked,
 } = messagesSlice.actions
 
 export default messagesSlice.reducer

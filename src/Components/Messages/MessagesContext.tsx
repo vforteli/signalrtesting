@@ -5,7 +5,7 @@ import { createContext, FC, useContext, useEffect } from 'react'
 import { useDispatch } from 'react-redux';
 import { MessageModel, OpenAPI } from '../../apiclient';
 import { setCurrentUser } from '../../store/authentication/authenticationSlice';
-import { fetchPreviousMessages, messageDeleted, messageReceived, messagesCleared, sendMessage, sendMessageFulfilled, setTyping } from '../../store/messages/messagesSlice';
+import { fetchPreviousMessages, messageDeleted, messageReceived, messagesCleared, sendMessage, sendMessageFulfilled, setMessageAcked, setTyping } from '../../store/messages/messagesSlice';
 import { setHubConnectionState } from '../../store/messages/signalrSlice';
 import { getCsrfTokenFromCookie, getDefaultHeaders } from '../../Utils';
 
@@ -56,7 +56,7 @@ export const MessagesContextProvider: FC = ({ children }) => {
     });
 
     connection.on("ackMessage", (messageId: string, userId: string) => {
-        console.debug(`${userId} acked messageId ${messageId}`)
+        dispatch(setMessageAcked({ messageId: messageId, acked: true }))
     });
 
     connection.onreconnecting(() => dispatch(setHubConnectionState(connection.state)));
