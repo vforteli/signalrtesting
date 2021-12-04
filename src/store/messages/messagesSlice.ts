@@ -32,7 +32,7 @@ const messagesSlice = createSlice({
     messagesLoading: false,
     clearMessagesLoading: false,
     selectedMessages: [] as string[],
-    typing: {} as Record<string, string[]>,
+    typing: {} as Record<string, Record<string, boolean>>,
   },
   reducers: {
     messageDeleted(state, action: PayloadAction<string>) {
@@ -53,11 +53,17 @@ const messagesSlice = createSlice({
       }
     },
     setTyping(state, action: PayloadAction<({ chatId: string, userId: string, typing: boolean })>) {
+      const foo = state.typing[action.payload.chatId]
       if (action.payload.typing) {
-        state.typing[action.payload.chatId] = [action.payload.userId, ...state.typing[action.payload.chatId] ?? []] // duh, duplicates
+        if (!foo) {
+          state.typing[action.payload.chatId] = { [action.payload.userId]: true }
+        }
+        else {
+          foo[action.payload.userId] = true
+        }
       }
-      else if (state.typing[action.payload.chatId]) {
-        state.typing[action.payload.chatId] = state.typing[action.payload.chatId]!.filter(o => o !== action.payload.userId)
+      else if (foo) {
+        delete foo[action.payload.userId]
       }
     },
     sendMessage(state, action: PayloadAction<({ chatId: string, message: string })>) {
@@ -76,8 +82,9 @@ const messagesSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder.addCase(messageReceived.fulfilled, (state, action) => {
-      if (state.typing[action.payload.chatId]) {
-        state.typing[action.payload.chatId] = state.typing[action.payload.chatId]!.filter(o => o !== action.payload.userId)
+      const foo = state.typing[action.payload.chatId]
+      if (foo) {
+        delete foo[action.payload.userId]
       }
 
       state.items.push(action.payload);

@@ -10,8 +10,8 @@ function TypingIndicator(props: { chatId: string }) {
 
     return (
         <Box padding={0} sx={{ display: 'flex', justifyContent: 'flex-start', fontSize: 14 }}>
-            {typing && typing.map(userId =>
-                <Fragment key={userId}><MoreHorizIcon /> {userId} is typing</Fragment>
+            {typing && Object.keys(typing).map(k =>
+                <Fragment key={k}><MoreHorizIcon /> {k} is typing</Fragment>
             )}
         </Box>)
 }
