@@ -30,15 +30,14 @@ function MessageRow(props: { row: MessageModel }) {
     const user = useSelector((state: RootState) => state.currentUser.user)
     const active = selectedMessages.includes(props.row.messageId)
 
-    // todo fix this.. should be in the messagemodel to show it instantly, this is completely daft
-    const ownMessage = props.row.name === user?.sub || props.row.name === ''
+    const ownMessage = props.row.userId === user?.sub || props.row.userId === ''
     const derp: SxProps<Theme> = { bgcolor: 'info.main', color: 'info.contrastText' }
 
     return (
         <Box padding={2} sx={{ display: 'flex', justifyContent: ownMessage ? 'flex-end' : 'flex-start' }}>
             <Card sx={ownMessage ? derp : {}} style={{ maxWidth: '90%' }} key={props.row.messageId}>
                 <CardHeader>
-                    {props.row.name}
+                    {props.row.userId}
                 </CardHeader>
                 <CardContent>
                     {props.row.message}

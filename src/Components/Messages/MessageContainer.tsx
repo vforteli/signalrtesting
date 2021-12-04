@@ -10,6 +10,8 @@ import { HubConnectionState } from "@microsoft/signalr";
 
 
 function MessageContainer() {
+    const chatId = '00000000-0000-0000-0000-000000000000'
+
     const dispatch = useDispatch()
     const isLoggedIn = useSelector((state: RootState) => state.currentUser.isLoggedIn);
     const isNotificationsEnabled = useSelector((state: RootState) => state.app.notificationsEnabled)
@@ -34,10 +36,10 @@ function MessageContainer() {
             <br />
             <br />
             <Box sx={{ paddingBottom: '5em' }}>
-                <MessageList />
+                <MessageList chatId={chatId} />
             </Box>
             <Box sx={{ position: 'fixed', bottom: 0, height: '4em', backgroundColor: '#ddd', width: '100%', left: '0px' }}>
-                <SendMessageForm />
+                <SendMessageForm chatId={chatId} />
             </Box>
         </>
     )

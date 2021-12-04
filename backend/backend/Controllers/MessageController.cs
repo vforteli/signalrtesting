@@ -26,17 +26,6 @@ namespace backend.Controllers
         }
 
 
-        [HttpPost("api/messages")]
-        public async Task<ActionResult<MessageModel>> SendMessage([FromBody][Required] SendMessageModel model)
-        {
-            var message = new MessageModel(HttpContext?.User?.Identity?.Name!, Guid.NewGuid(), model.Message, DateTime.UtcNow);
-            _messageService.Messages.TryAdd(message.MessageId, message);
-            await _hubContext.Clients.All.SendAsync("broadcastMessage", message);
-
-            return message;
-        }
-
-
         [HttpDelete("api/messages/{messageId}")]
         public async Task<ActionResult<MessageModel>> DeleteMessage([FromRoute][Required] Guid messageId)
         {

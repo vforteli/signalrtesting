@@ -5,9 +5,7 @@ import MessageRow from "./MessageRow";
 import { Grid, Skeleton } from "@mui/material";
 import TypingIndicator from "./TypingIndicator";
 
-function MessageList() {
-    const chatId = '42'
-
+function MessageList(props: { chatId: string }) {
     const messagesLoading = useSelector((state: RootState) => state.messages.messagesLoading)
     const items = useSelector((state: RootState) => state.messages.items)
     const ref = useRef<null | HTMLDivElement>(null)
@@ -25,7 +23,7 @@ function MessageList() {
             ? <Skeleton animation="wave" />
             : <Grid>
                 {items.map((row) => <MessageRow key={row.messageId} row={row} />)}
-                <TypingIndicator chatId={chatId} />
+                <TypingIndicator chatId={props.chatId} />
                 <div ref={ref}></div>
             </Grid>
     )

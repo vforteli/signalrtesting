@@ -16,18 +16,12 @@ namespace backend.Hubs
             _messageService = messageService;
         }
 
-        public Task BroadcastMessage(string message)
-        {
-            var item = new MessageModel(Context?.User?.Identity?.Name!, Guid.NewGuid(), message, DateTime.UtcNow);
-            _messageService.Messages.TryAdd(item.MessageId, item);
-            return Clients.All.BroadcastMessage(item);
-        }
-
         public Task AckMessage(Guid messageId)
         {
             // this should remove the message from the cache
             // get list of who is waiting for ack, just use all for now
-            return Clients.All.AckMessage(messageId);
+            // oh this should go to the sender of the message...
+            return Clients.Others.AckMessage(messageId, Context?.User?.Identity?.Name!);
         }
 
         public Task DeleteMessage(Guid messageId)
@@ -42,6 +36,16 @@ namespace backend.Hubs
             // todo this should use some id
             // todo this should send to others in group based on chat id
             return Clients.Others.IndicateTyping(chatId, Context?.User?.Identity?.Name!);
+        }
+
+        [HubMethodName("sendMessage")]
+        public async Task<MessageModel> SendMessage(SendMessageModel model)
+        {
+            var message = new MessageModel(Context?.User?.Identity?.Name!, model.ChatId, Guid.NewGuid(), model.Message, DateTime.UtcNow);
+            _messageService.Messages.TryAdd(message.MessageId, message);
+            await Clients.Others.BroadcastMessage(message);
+
+            return message;
         }
     }
 }

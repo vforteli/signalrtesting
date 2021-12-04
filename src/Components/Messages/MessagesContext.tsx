@@ -5,7 +5,7 @@ import { createContext, FC, useContext, useEffect } from 'react'
 import { useDispatch } from 'react-redux';
 import { MessageModel, OpenAPI } from '../../apiclient';
 import { setCurrentUser } from '../../store/authentication/authenticationSlice';
-import { fetchPreviousMessages, messageDeleted, messageReceived, messagesCleared, sendMessage, setTyping } from '../../store/messages/messagesSlice';
+import { fetchPreviousMessages, messageDeleted, messageReceived, messagesCleared, sendMessage, sendMessageFulfilled, setTyping } from '../../store/messages/messagesSlice';
 import { setHubConnectionState } from '../../store/messages/signalrSlice';
 import { getCsrfTokenFromCookie, getDefaultHeaders } from '../../Utils';
 
@@ -30,27 +30,33 @@ export const MessagesContextProvider: FC = ({ children }) => {
     // todo move this to service
     const connection: HubConnection = new HubConnectionBuilder()
         .withAutomaticReconnect()
-        .withUrl(process.env.REACT_APP_SIGNALR_HUB_URL ?? '', { accessTokenFactory: getAccessTokenSilently, headers: { 'X-XSRF-TOKEN': getCsrfTokenFromCookie() } })
+        .withUrl(process.env.REACT_APP_SIGNALR_HUB_URL ?? '', { accessTokenFactory: getAccessTokenSilently, headers: { 'X-XSRF-TOKEN': getCsrfTokenFromCookie() ?? '' } })
         .build()
 
     connection.on("broadcastMessage", (message: MessageModel) => {
         dispatch(messageReceived(message))
-        dispatch(setTyping({ typing: false, chatId: '42', userId: 'someuser' }))
+        dispatch(setTyping({ typing: false, chatId: message.chatId, userId: message.userId }))
         if (timer) {
             clearTimeout(timer)
         }
+
+        connection.send('ackMessage', message.messageId)
     });
     connection.on("deleteMessage", (messageId: string) => dispatch(messageDeleted(messageId)));
     connection.on("clearMessages", () => dispatch(messagesCleared()));
 
     connection.on("indicateTyping", (chatId: string, username: string) => {
-        dispatch(setTyping({ typing: true, chatId: '42', userId: username }))
+        dispatch(setTyping({ typing: true, chatId: chatId, userId: username }))
         if (timer) {
             clearTimeout(timer)
         }
         timer = setTimeout(() => {
-            dispatch(setTyping({ typing: false, chatId: '42', userId: username }))
+            dispatch(setTyping({ typing: false, chatId: chatId, userId: username }))
         }, 3000)
+    });
+
+    connection.on("ackMessage", (messageId: string, userId: string) => {
+        console.debug(`${userId} acked messageId ${messageId}`)
     });
 
     connection.onreconnecting(() => dispatch(setHubConnectionState(connection.state)));
@@ -61,12 +67,10 @@ export const MessagesContextProvider: FC = ({ children }) => {
 
     useEffect(() => {
         if (isAuthenticated) {
-            (async () => {
-                OpenAPI.BASE = process.env.REACT_APP_BACKEND_URL ?? ''
-                OpenAPI.TOKEN = getAccessTokenSilently
-                OpenAPI.HEADERS = getDefaultHeaders
-                dispatch(setCurrentUser({ isLoggedIn: isAuthenticated, username: user?.name ?? '', user: user }))
-            })();
+            OpenAPI.BASE = process.env.REACT_APP_BACKEND_URL ?? ''
+            OpenAPI.TOKEN = getAccessTokenSilently
+            OpenAPI.HEADERS = getDefaultHeaders
+            dispatch(setCurrentUser({ isLoggedIn: isAuthenticated, username: user?.name ?? '', user: user }))
 
             dispatch(setHubConnectionState(HubConnectionState.Connecting));
             connection.start().then(() => dispatch(setHubConnectionState(connection.state))).catch(err => console.error(err));
@@ -81,11 +85,13 @@ export const MessagesContextProvider: FC = ({ children }) => {
 
 
     const throttledIndicateTyping = throttle(async (chatId: string) => {
-        await connection.invoke("indicateTyping", chatId)
+        await connection.send("indicateTyping", chatId)
     }, 1000, { leading: true, trailing: false })
 
-    const send = (chatId: string, message: string) => {
-        dispatch(sendMessage(message))
+    const send = async (chatId: string, message: string) => {
+        dispatch(sendMessage({ chatId: chatId, message: message }))
+        const response = await connection.invoke<MessageModel>('sendMessage', { chatId: chatId, message: message })
+        dispatch(sendMessageFulfilled(response))
     }
 
     return (

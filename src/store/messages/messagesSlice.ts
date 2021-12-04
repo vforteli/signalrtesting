@@ -5,12 +5,8 @@ import { MessageModel, MessageService } from '../../apiclient';
 
 export const fetchPreviousMessages = createAsyncThunk<MessageModel[]>('messages/fetchPreviousMessages', async (_, { getState }) => {
   const state = getState() as RootState
-  const fromDateQuery = state.messages.items.length > 0 ? state.messages.items[state.messages.items.length - 1].timeSent : '';
+  const fromDateQuery = state.messages.items.length > 0 ? state.messages.items[state.messages.items.length - 1]!.timeSent : '';
   return await MessageService.getMessages(fromDateQuery)
-})
-
-export const sendMessage = createAsyncThunk('messages/sendMessage', async (message: string) => {
-  return await MessageService.sendMessage({ message: message })
 })
 
 export const deleteMessage = createAsyncThunk('messages/deleteMessage', async (messageId: string) => {
@@ -23,13 +19,10 @@ export const clearMessages = createAsyncThunk('messages/clearMessages', async ()
 
 export const messageReceived = createAsyncThunk('messages/messageReceived', async (message: MessageModel, { getState }) => {
   const state = getState() as RootState
-
-  if (message.name !== state.currentUser.user?.sub) { // todo extremely ugly way of ignoring broadcasted messages from self, this should be fixed in backend :D
-    if (state.app.notificationsEnabled) {
-      new Notification(message.message);
-    }
-    return message
+  if (state.app.notificationsEnabled) {
+    new Notification(message.message);
   }
+  return message
 })
 
 const messagesSlice = createSlice({
@@ -39,8 +32,7 @@ const messagesSlice = createSlice({
     messagesLoading: false,
     clearMessagesLoading: false,
     selectedMessages: [] as string[],
-    typing: false,   // this should actually be an object with chatid and userid
-    typingUser: '', // todo fix....
+    typing: {} as Record<string, string[]>,
   },
   reducers: {
     messageDeleted(state, action: PayloadAction<string>) {
@@ -61,29 +53,34 @@ const messagesSlice = createSlice({
       }
     },
     setTyping(state, action: PayloadAction<({ chatId: string, userId: string, typing: boolean })>) {
-      state.typing = action.payload.typing
-      state.typingUser = action.payload.userId
+      if (action.payload.typing) {
+        state.typing[action.payload.chatId] = [action.payload.userId, ...state.typing[action.payload.chatId] ?? []] // duh, duplicates
+      }
+      else if (state.typing[action.payload.chatId]) {
+        state.typing[action.payload.chatId] = state.typing[action.payload.chatId]!.filter(o => o !== action.payload.userId)
+      }
     },
+    sendMessage(state, action: PayloadAction<({ chatId: string, message: string })>) {
+      state.items.push({
+        message: action.payload.message,
+        chatId: action.payload.chatId,
+        messageId: 'pending',
+        userId: '',
+        timeSent: '',
+      });
+    },
+    sendMessageFulfilled(state, action: PayloadAction<MessageModel>) {
+      const index = state.items.findIndex(o => o.messageId === 'pending')
+      state.items[index] = action.payload
+    }
   },
   extraReducers: (builder) => {
     builder.addCase(messageReceived.fulfilled, (state, action) => {
-      if (action.payload) {
-        state.typing = false
-        state.items.push(action.payload);
+      if (state.typing[action.payload.chatId]) {
+        state.typing[action.payload.chatId] = state.typing[action.payload.chatId]!.filter(o => o !== action.payload.userId)
       }
-    });
 
-    builder.addCase(sendMessage.pending, (state, action) => {
-      state.items.push({ message: action.meta.arg, messageId: 'pending', name: '', timeSent: '' });
-    });
-    builder.addCase(sendMessage.fulfilled, (state, action) => {
-      const index = state.items.findIndex(o => o.messageId === 'pending')
-      state.items[index] = action.payload
-    });
-    builder.addCase(sendMessage.rejected, (state, action) => {
-      // todo this should mark the message as send failed
-      // currently it is just removed because im lazy
-      state.items = state.items.filter(o => o.messageId !== 'pending')
+      state.items.push(action.payload);
     });
 
     builder.addCase(fetchPreviousMessages.pending, (state) => {
@@ -129,6 +126,8 @@ export const {
   getMessages,
   setMessageActive,
   setTyping,
+  sendMessage,
+  sendMessageFulfilled,
 } = messagesSlice.actions
 
 export default messagesSlice.reducer

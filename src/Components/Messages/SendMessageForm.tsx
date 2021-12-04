@@ -6,9 +6,7 @@ import { Divider, IconButton, InputBase, Paper } from "@mui/material";
 import SendIcon from '@mui/icons-material/Send';
 import { useMessages } from "./MessagesContext";
 
-const chatId = '00000000-0000-0000-0000-000000000000'
-
-function SendMessageForm() {
+function SendMessageForm(props: { chatId: string }) {
     const [message, setMessage] = useState('');
     const hubState = useSelector((state: RootState) => state.signalr.connectionState);
 
@@ -16,7 +14,7 @@ function SendMessageForm() {
 
     const handleSendMessage = () => {
         if (message.length > 0) {
-            messagesService.sendMessage(chatId, message)
+            messagesService.sendMessage(props.chatId, message)
             setMessage('')
         }
     }
@@ -25,7 +23,7 @@ function SendMessageForm() {
             handleSendMessage();
         }
         else {
-            messagesService.indicateTyping(chatId)
+            messagesService.indicateTyping(props.chatId)
         }
     }
 
