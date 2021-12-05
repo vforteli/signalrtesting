@@ -11,5 +11,5 @@ public interface IMessageHub
 
     Task DeleteMessage(Guid messageId);
 
-    Task IndicateTyping(Guid chatId, string username);
+    Task IndicateTyping(Guid chatId, string userId);
 }

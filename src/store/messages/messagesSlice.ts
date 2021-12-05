@@ -36,7 +36,7 @@ const messagesSlice = createSlice({
     ackedMessages: {} as Record<string, boolean>, // todo mhmhmmm..
   },
   reducers: {
-    setMessageAcked(state, action: PayloadAction<({ messageId: string, acked: boolean })>) {
+    setMessageAcked(state, action: PayloadAction<({ messageId: string, userId: string, acked: boolean })>) {
       state.ackedMessages[action.payload.messageId] = action.payload.acked
     },
     messageDeleted(state, action: PayloadAction<string>) {

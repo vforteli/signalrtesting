@@ -5,7 +5,7 @@ import { RootState } from "../..";
 import { MessageModel } from "../../apiclient";
 import { Box, Button, Card, CardActions, CardContent, CardHeader, Theme } from "@mui/material";
 import { SxProps } from "@mui/system";
-import DeliveryStatusIcon from "./DeliveryStatusIcon";
+import DeliveryStatusIcon, { DeliveryStatus } from "./DeliveryStatusIcon";
 
 
 function MessageRow(props: { row: MessageModel }) {
@@ -16,11 +16,11 @@ function MessageRow(props: { row: MessageModel }) {
     const user = useSelector((state: RootState) => state.currentUser.user)
     const active = selectedMessages.includes(props.row.messageId)
 
-    const status = messageAcked
-        ? 2
+    const status: DeliveryStatus = messageAcked
+        ? 'Delivered'
         : props.row.timeSent
-            ? 1
-            : 0
+            ? 'Sent'
+            : 'Sending'
 
     const ownMessage = props.row.userId === user?.sub || props.row.userId === ''
     const derp: SxProps<Theme> = { bgcolor: 'info.main', color: 'info.contrastText' }

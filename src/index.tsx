@@ -27,11 +27,7 @@ const store = configureStore({
   middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(logger)
 })
 
-const cache = createCache({
-  key: 'app',
-  nonce: getNonceFromCookie(),
-  prepend: true,
-});
+const cache = createCache({ key: 'app', nonce: getNonceFromCookie(), prepend: true, });
 
 const theme = createTheme();
 

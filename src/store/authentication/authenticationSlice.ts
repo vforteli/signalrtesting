@@ -1,14 +1,12 @@
 import { User } from '@auth0/auth0-react';
-import { Action, createSlice, PayloadAction } from '@reduxjs/toolkit'
+import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 
 const initialAuthenticationState: IAuthenticationState = {
     isLoggedIn: false,
-    username: '',
     user: undefined,
 }
 
 export interface IAuthenticationState {
-    username: string;
     isLoggedIn: boolean;
     user: User | undefined;
 }
@@ -21,7 +19,7 @@ const authenticationSlice = createSlice({
         setCurrentUser(state, action: PayloadAction<IAuthenticationState>) {
             return action.payload
         },
-        clearCurrentUser(state, action: Action) {
+        clearCurrentUser() {
             return initialAuthenticationState
         }
     }
