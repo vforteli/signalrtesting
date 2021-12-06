@@ -76,9 +76,7 @@ public class Program
             endpoints.MapControllers();
         });
 
-        var indexContent = File.ReadAllText(Path.Combine(builder.Environment.WebRootPath, "index.html"));   // todo hmmm...
-
-        app.UseIndex(new IndexMiddlewareOptions(builder.Configuration["CspPolicy"], indexContent));
+        app.UseIndex(new IndexMiddlewareOptions(builder.Configuration["CspPolicy"], Path.Combine(builder.Environment.WebRootPath, "index.html")));
 
         app.Run();
     }
