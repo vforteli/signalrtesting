@@ -2,11 +2,12 @@ import React, { useEffect } from "react"
 import MessageList from "./MessageList";
 import SendMessageForm from "./SendMessageForm";
 import { useDispatch, useSelector } from "react-redux";
-import { clearMessages, fetchPreviousMessages } from "../../store/messages/messagesSlice";
+import { clearMessages } from "../../store/messages/messagesSlice";
 import { RootState } from "../..";
 import { getNotificationEnabled, setNotificationEnabled } from "../../store/app/appSlice";
 import { FormGroup, FormControlLabel, Switch, Box, Button } from "@mui/material";
 import { HubConnectionState } from "@microsoft/signalr";
+import { useMessages } from "./MessagesContext";
 
 
 function MessageContainer() {
@@ -17,14 +18,15 @@ function MessageContainer() {
     const isNotificationsEnabled = useSelector((state: RootState) => state.app.notificationsEnabled)
     const hubState = useSelector((state: RootState) => state.signalr.connectionState);
     const clearMessagesLoading = useSelector((state: RootState) => state.messages.clearMessagesLoading);
+    const messagesService = useMessages()
 
     useEffect(() => {
-        if (isLoggedIn) {
+        if (isLoggedIn && hubState === HubConnectionState.Connected) {
             // should this be called every time the page is opened? this decision depends on if the hub should be disconnected when leaving the page
-            dispatch(fetchPreviousMessages());
+            messagesService.fetchMessages()
             dispatch(getNotificationEnabled())
         }
-    }, [dispatch, isLoggedIn]);
+    }, [dispatch, isLoggedIn, messagesService, hubState]);
 
     return (
         <>

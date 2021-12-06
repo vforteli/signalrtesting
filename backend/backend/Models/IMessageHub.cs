@@ -7,9 +7,9 @@ public interface IMessageHub
 {
     Task BroadcastMessage(MessageModel message);
 
-    Task AckMessage(Guid messageId, string userId);
+    Task AckMessages(AckMessagesModel model);
 
     Task DeleteMessage(Guid messageId);
 
-    Task IndicateTyping(Guid chatId, string userId);
+    Task IndicateTyping(IndicateTypingModel model);
 }

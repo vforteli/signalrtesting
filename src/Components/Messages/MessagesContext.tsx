@@ -3,13 +3,15 @@ import { HubConnectionBuilder, HubConnectionState } from '@microsoft/signalr';
 import throttle from 'lodash.throttle';
 import { createContext, FC, useContext, useEffect } from 'react'
 import { useDispatch } from 'react-redux';
-import { MessageModel } from '../../apiclient';
-import { fetchPreviousMessages, messageDeleted, messageReceived, messagesCleared, sendMessage, sendMessageFulfilled, setMessageAcked, setTyping } from '../../store/messages/messagesSlice';
+import { MessageModel, MessageService } from '../../apiclient';
+import { fetchMessagesFulfilled, fetchMessagesPending, messageDeleted, messageReceived, messagesCleared, sendMessage, sendMessageFulfilled, setMessageAcked, setTyping } from '../../store/messages/messagesSlice';
 import { setHubConnectionState } from '../../store/messages/signalrSlice';
 import { getCsrfTokenFromCookie } from '../../Utils';
+import { AckMessagesModel, IndicateTypingModel } from './Models';
 
 interface IMessagesContext {
     sendMessage: (chatId: string, message: string) => void
+    fetchMessages: () => void
     indicateTyping: (chatId: string) => void
 }
 
@@ -39,24 +41,25 @@ export const MessagesContextProvider: FC = ({ children }) => {
         dispatch(messageReceived(message))
         dispatch(setTyping({ typing: false, chatId: message.chatId, userId: message.userId }))
         removeTimer(message.chatId + message.userId)
-        connection.send('ackMessage', message.messageId)
+        connection.send('ackMessages', [message.messageId])
     });
     connection.on("deleteMessage", (messageId: string) => dispatch(messageDeleted(messageId)));
     connection.on("clearMessages", () => dispatch(messagesCleared()));
 
-    connection.on("indicateTyping", (chatId: string, userId: string) => {
-        dispatch(setTyping({ typing: true, chatId: chatId, userId: userId }))
-        removeTimer(chatId + userId)
-        typingTimers[chatId + userId] = setTimeout(() => { dispatch(setTyping({ typing: false, chatId: chatId, userId: userId })) }, 3000)
+    connection.on("indicateTyping", (model: IndicateTypingModel) => {
+        dispatch(setTyping(model))
+        removeTimer(model.chatId + model.userId)
+        typingTimers[model.chatId + model.userId] = setTimeout(() => { dispatch(setTyping({ ...model, typing: false })) }, 3000)
     });
 
-    connection.on("ackMessage", (messageId: string, userId: string) => dispatch(setMessageAcked({ messageId: messageId, userId: userId, acked: true })))
+    connection.on("ackMessages", (ack: AckMessagesModel) => dispatch(setMessageAcked(ack)))
 
     connection.onreconnecting(() => dispatch(setHubConnectionState(connection.state)));
     connection.onreconnected(() => {
         dispatch(setHubConnectionState(connection.state));
-        dispatch(fetchPreviousMessages());
+        fetchMessages()
     });
+
 
     useEffect(() => {
         if (isAuthenticated) {
@@ -80,10 +83,21 @@ export const MessagesContextProvider: FC = ({ children }) => {
         dispatch(sendMessageFulfilled(response))
     }
 
+    const fetchMessages = async () => {
+        dispatch(fetchMessagesPending())
+        // const state = getState() as RootState
+        // const fromDateQuery = state.messages.items.length > 0 ? state.messages.items[state.messages.items.length - 1]!.timeSent : '';
+        const messages = await MessageService.getMessages()
+        dispatch(fetchMessagesFulfilled(messages))
+        connection.send('ackMessages', messages.map(o => o.messageId))
+    }
+
+
     return (
         <MessagesContext.Provider value={{
             indicateTyping: throttledIndicateTyping,
             sendMessage: send,
+            fetchMessages: fetchMessages
         }}>
             {children}
         </MessagesContext.Provider>
@@ -98,3 +112,5 @@ export const useMessages = () => {
 
     throw Error('Context undefined? Forgot a provider somewhere?')
 }
+
+

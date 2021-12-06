@@ -1,13 +1,8 @@
 import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { RootState } from '../..';
 import { MessageModel, MessageService } from '../../apiclient';
+import { AckMessagesModel, IndicateTypingModel } from '../../Components/Messages/Models';
 
-
-export const fetchPreviousMessages = createAsyncThunk<MessageModel[]>('messages/fetchPreviousMessages', async (_, { getState }) => {
-  const state = getState() as RootState
-  const fromDateQuery = state.messages.items.length > 0 ? state.messages.items[state.messages.items.length - 1]!.timeSent : '';
-  return await MessageService.getMessages(fromDateQuery)
-})
 
 export const deleteMessage = createAsyncThunk('messages/deleteMessage', async (messageId: string) => {
   return await MessageService.deleteMessage(messageId)
@@ -33,11 +28,13 @@ const messagesSlice = createSlice({
     clearMessagesLoading: false,
     selectedMessages: [] as string[],
     typing: {} as Record<string, Record<string, boolean>>,
-    ackedMessages: {} as Record<string, boolean>, // todo mhmhmmm..
+    ackedMessages: {} as Record<string, boolean>,
   },
   reducers: {
-    setMessageAcked(state, action: PayloadAction<({ messageId: string, userId: string, acked: boolean })>) {
-      state.ackedMessages[action.payload.messageId] = action.payload.acked
+    setMessageAcked(state, action: PayloadAction<AckMessagesModel>) {
+      action.payload.messageIds.forEach(o => {
+        state.ackedMessages[o] = true
+      })
     },
     messageDeleted(state, action: PayloadAction<string>) {
       state.items = state.items.filter(o => o.messageId !== action.payload);
@@ -56,7 +53,7 @@ const messagesSlice = createSlice({
         state.selectedMessages = state.selectedMessages.filter(o => o !== action.payload.messageId);
       }
     },
-    setTyping(state, action: PayloadAction<({ chatId: string, userId: string, typing: boolean })>) {
+    setTyping(state, action: PayloadAction<IndicateTypingModel>) {
       const foo = state.typing[action.payload.chatId]
       if (action.payload.typing) {
         if (!foo) {
@@ -82,6 +79,13 @@ const messagesSlice = createSlice({
     sendMessageFulfilled(state, action: PayloadAction<MessageModel>) {
       const index = state.items.findIndex(o => o.messageId === 'pending')
       state.items[index] = action.payload
+    },
+    fetchMessagesPending(state) {
+      state.messagesLoading = true
+    },
+    fetchMessagesFulfilled(state, action: PayloadAction<MessageModel[]>) {
+      state.messagesLoading = false;
+      state.items = state.items.concat(action.payload);
     }
   },
   extraReducers: (builder) => {
@@ -93,19 +97,6 @@ const messagesSlice = createSlice({
 
       state.items.push(action.payload);
     });
-
-    builder.addCase(fetchPreviousMessages.pending, (state) => {
-      state.messagesLoading = true;
-    });
-    builder.addCase(fetchPreviousMessages.fulfilled, (state, action) => {
-      state.messagesLoading = false;
-      state.items = state.items.concat(action.payload);
-    });
-    builder.addCase(fetchPreviousMessages.rejected, (state, action) => {
-      state.messagesLoading = false;
-      console.debug(action.error)
-    });
-
 
     builder.addCase(deleteMessage.pending, (state) => {
       // loading?
@@ -140,6 +131,8 @@ export const {
   sendMessage,
   sendMessageFulfilled,
   setMessageAcked,
+  fetchMessagesFulfilled,
+  fetchMessagesPending,
 } = messagesSlice.actions
 
 export default messagesSlice.reducer
