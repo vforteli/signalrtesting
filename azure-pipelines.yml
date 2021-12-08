@@ -2,7 +2,7 @@ trigger:
 - master
 
 pool:
-  vmImage: windows-2022
+  vmImage: ubuntu-latest
 
 variables:
   solution: '**/*.sln'
@@ -17,6 +17,10 @@ stages:
   jobs:
   - job: Build        
     steps:  
+    - task: UseDotNet@2      
+      inputs:
+        version: 6.0.x
+
     - task: Cache@2
       inputs:
         key: 'nuget | "$(Agent.OS)" | **/packages.lock.json,!**/bin/**'
@@ -61,14 +65,17 @@ stages:
   - job: Build        
     steps:    
     - script: npm ci
+      displayName:  npm ci
         
     - script: npm run build
+      displayName: npm run build
     
     - task: PublishBuildArtifacts@1
       inputs:
-        pathtoPublish: $(Pipeline.Workspace)/build/
+        pathtoPublish: $(System.DefaultWorkingDirectory)/build/
         artifactName: frontend
       
+
 - stage: merge
   dependsOn: 
   - buildfrontend
@@ -81,3 +88,24 @@ stages:
       - checkout: none
       - download: current
       
+      - task: CopyFiles@2
+        inputs:
+          sourceFolder: $(Agent.BuildDirectory)/frontend/
+          contents: '**' 
+          targetFolder: $(Agent.BuildDirectory)/backend/backend/wwwroot/
+      
+      - task: PublishBuildArtifacts@1
+        inputs:
+          pathtoPublish: $(Agent.BuildDirectory)/backend/backend/        
+          artifactName: app
+
+
+- stage: deploy
+  dependsOn: 
+  - merge    
+  displayName: deploy
+  jobs:
+  - job: deploy        
+    steps:
+      - checkout: none
+      - download: current      
