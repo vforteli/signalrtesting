@@ -53,6 +53,7 @@ stages:
         pathtoPublish: $(Build.ArtifactStagingDirectory)
         artifactName: backend
 
+
 - stage: buildfrontend
   dependsOn: []
   displayName: Build frontend
@@ -65,7 +66,7 @@ stages:
     
     - task: PublishBuildArtifacts@1
       inputs:
-        pathtoPublish: $(Build.ArtifactStagingDirectory)
+        pathtoPublish: $(Pipeline.Workspace)/build/
         artifactName: frontend
       
 - stage: merge
