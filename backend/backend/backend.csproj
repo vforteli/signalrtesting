@@ -11,9 +11,9 @@
 
   <ItemGroup>
     <PackageReference Include="Azure.Storage.Files.DataLake" Version="12.8.0" />
-    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="6.0.0" NoWarn="NU1605" />
-    <PackageReference Include="Microsoft.AspNetCore.Authentication.OpenIdConnect" Version="6.0.0" NoWarn="NU1605" />
-    <PackageReference Include="Microsoft.Azure.SignalR" Version="1.13.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="6.0.2" NoWarn="NU1605" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.OpenIdConnect" Version="6.0.2" NoWarn="NU1605" />
+    <PackageReference Include="Microsoft.Azure.SignalR" Version="1.15.2" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.2.3" />
     <PackageReference Include="System.Collections" Version="4.3.0" />
   </ItemGroup>

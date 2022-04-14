@@ -17,5 +17,5 @@ namespace backend.Models
 
     public record AckMessagesModel(
         string UserId,
-        IEnumerable<Guid> messageIds);
+        IEnumerable<Guid> MessageIds);
 }
