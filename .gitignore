@@ -403,3 +403,5 @@ backend/backend/Properties/ServiceDependencies/tikali-appservice - Web Deploy1/p
 backend/backend/Properties/ServiceDependencies/tikalii-appservice - Web Deploy/profile.arm.json
 
 backend/backend/Properties/ServiceDependencies/tikalii-appservice - Zip Deploy/profile.arm.json
+
+bicep/appservicestuff.parameters.json
