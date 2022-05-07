@@ -29,7 +29,16 @@ jobs:
         run: dotnet test --no-build --verbosity normal
         working-directory: backend/
 
-      # publish output  
+      - name: Test backend
+        run: dotnet publish -c Release --no-build --verbosity normal -o publish/
+        working-directory: backend/backend
+
+      - name: Upload backend artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: backend
+          path: |
+            backend/backend/publish
 
   buildfrontend:
     runs-on: ubuntu-latest
@@ -55,7 +64,7 @@ jobs:
         run: npm run build
         working-directory: frontend/
 
-      # publish output        
+      # publish output
 
   merge:
     runs-on: ubuntu-latest
@@ -63,6 +72,5 @@ jobs:
     steps:
       - name: derp
         run: echo 'derpderp'
-    
 
     # publish
