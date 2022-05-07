@@ -15,11 +15,11 @@ namespace backend.Controllers
     [ApiController]
     public class MessageController : ControllerBase
     {
-        private readonly IHubContext<MessageHub> _hubContext;
+        private readonly IHubContext<MessageHub, IMessageHub> _hubContext;
         private readonly MockMessageService _messageService;
 
 
-        public MessageController(IHubContext<MessageHub> hubContext, MockMessageService messageService)
+        public MessageController(IHubContext<MessageHub, IMessageHub> hubContext, MockMessageService messageService)
         {
             _hubContext = hubContext;
             _messageService = messageService;
@@ -31,11 +31,11 @@ namespace backend.Controllers
         {
             if (_messageService.Messages.TryRemove(messageId, out var deletedMessage))
             {
-                await _hubContext.Clients.All.SendAsync("deleteMessage", messageId);
+                await _hubContext.Clients.All.DeleteMessage(messageId);
                 return deletedMessage;
             }
 
-            return BadRequest("Message not found");
+            return NotFound("Message not found");
         }
 
 
@@ -44,8 +44,7 @@ namespace backend.Controllers
         {
             await Task.Delay(700); // simulate some lag
             _messageService.Messages.Clear();
-            await _hubContext.Clients.All.SendAsync("clearMessages");
-
+            await _hubContext.Clients.All.ClearMessages();
             return Accepted();
         }
 

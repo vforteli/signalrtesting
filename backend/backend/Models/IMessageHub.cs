@@ -12,4 +12,7 @@ public interface IMessageHub
     Task DeleteMessage(Guid messageId);
 
     Task IndicateTyping(IndicateTypingModel model);
+
+    // todo this is a bit daft... but here just for testing and tinkering with ux
+    Task ClearMessages();
 }
