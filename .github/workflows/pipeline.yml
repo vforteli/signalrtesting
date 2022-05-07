@@ -22,11 +22,11 @@ jobs:
         working-directory: backend/
 
       - name: Build backend
-        run: dotnet build --no-restore
+        run: dotnet build -c Release --no-restore
         working-directory: backend/
 
       - name: Test backend
-        run: dotnet test --no-build --verbosity normal
+        run: dotnet test -c Release --no-build --verbosity normal
         working-directory: backend/
 
       - name: Publish backend

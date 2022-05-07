@@ -8,7 +8,6 @@ import { MessageHubClient } from '../../hubclient/MessageHubConnection';
 import { fetchMessagesFulfilled, fetchMessagesPending, messageDeleted, messageReceived, messagesCleared, sendMessage, sendMessageFulfilled, setMessageAcked, setTyping } from '../../store/messages/messagesSlice';
 import { setHubConnectionState } from '../../store/messages/signalrSlice';
 import { getCsrfTokenFromCookie } from '../../Utils';
-import { AckMessagesModel, IndicateTypingModel } from './Models';
 
 interface IMessagesContext {
     sendMessage: (chatId: string, message: string) => void
