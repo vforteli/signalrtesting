@@ -29,9 +29,9 @@ jobs:
         run: dotnet test --no-build --verbosity normal
         working-directory: backend/
 
-      - name: Test backend
+      - name: Publish backend
         run: dotnet publish -c Release --no-build --verbosity normal -o publish/
-        working-directory: backend/backend
+        working-directory: backend/backend/
 
       - name: Upload backend artifact
         uses: actions/upload-artifact@v3
@@ -54,11 +54,11 @@ jobs:
         run: npm ci
         working-directory: frontend/
 
-      - name: Test frontend
-        run: npm test
-        working-directory: frontend/
-        env:
-          CI: true
+      # - name: Test frontend
+      #   run: npm test
+      #   working-directory: frontend/
+      #   env:
+      #     CI: true
 
       - name: Build frontend
         run: npm run build
