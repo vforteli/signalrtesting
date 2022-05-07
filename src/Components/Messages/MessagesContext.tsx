@@ -4,6 +4,7 @@ import throttle from 'lodash.throttle';
 import { createContext, FC, useContext, useEffect } from 'react'
 import { useDispatch } from 'react-redux';
 import { MessageModel, MessageService } from '../../apiclient';
+import { MessageHubClient } from '../../hubclient/MessageHubConnection';
 import { fetchMessagesFulfilled, fetchMessagesPending, messageDeleted, messageReceived, messagesCleared, sendMessage, sendMessageFulfilled, setMessageAcked, setTyping } from '../../store/messages/messagesSlice';
 import { setHubConnectionState } from '../../store/messages/signalrSlice';
 import { getCsrfTokenFromCookie } from '../../Utils';
@@ -13,6 +14,7 @@ interface IMessagesContext {
     sendMessage: (chatId: string, message: string) => void
     fetchMessages: () => void
     indicateTyping: (chatId: string) => void
+    hubConnectionState: HubConnectionState
 }
 
 const MessagesContext = createContext<IMessagesContext | undefined>(undefined)
@@ -37,22 +39,41 @@ export const MessagesContextProvider: FC = ({ children }) => {
         .withUrl(process.env.REACT_APP_SIGNALR_HUB_URL ?? '', { accessTokenFactory: getAccessTokenSilently, headers: { 'X-XSRF-TOKEN': getCsrfTokenFromCookie() ?? '' } })
         .build()
 
-    connection.on("broadcastMessage", (message: MessageModel) => {
+    const messageHubClient = new MessageHubClient(connection)
+
+    messageHubClient.onBroadcastMessage((message) => {
         dispatch(messageReceived(message))
         dispatch(setTyping({ typing: false, chatId: message.chatId, userId: message.userId }))
         removeTimer(message.chatId + message.userId)
         connection.send('ackMessages', [message.messageId])
-    });
-    connection.on("deleteMessage", (messageId: string) => dispatch(messageDeleted(messageId)));
-    connection.on("clearMessages", () => dispatch(messagesCleared()));
+    })
 
-    connection.on("indicateTyping", (model: IndicateTypingModel) => {
+    // connection.on("broadcastMessage", (message: MessageModel) => {
+    //     dispatch(messageReceived(message))
+    //     dispatch(setTyping({ typing: false, chatId: message.chatId, userId: message.userId }))
+    //     removeTimer(message.chatId + message.userId)
+    //     connection.send('ackMessages', [message.messageId])
+    // });
+
+    messageHubClient.onDeleteMessage(messageId => dispatch(messageDeleted(messageId)));
+    // connection.on("deleteMessage", (messageId: string) => dispatch(messageDeleted(messageId)));
+
+    messageHubClient.onClearMessages(() => dispatch(messagesCleared()));
+    // connection.on("clearMessages", () => dispatch(messagesCleared()));
+
+    messageHubClient.onIndicateTyping(model => {
         dispatch(setTyping(model))
         removeTimer(model.chatId + model.userId)
         typingTimers[model.chatId + model.userId] = setTimeout(() => { dispatch(setTyping({ ...model, typing: false })) }, 3000)
-    });
+    })
+    // connection.on("indicateTyping", (model: IndicateTypingModel) => {
+    //     dispatch(setTyping(model))
+    //     removeTimer(model.chatId + model.userId)
+    //     typingTimers[model.chatId + model.userId] = setTimeout(() => { dispatch(setTyping({ ...model, typing: false })) }, 3000)
+    // });
 
-    connection.on("ackMessages", (ack: AckMessagesModel) => dispatch(setMessageAcked(ack)))
+    messageHubClient.onAckMessages(ack => dispatch(setMessageAcked(ack)))
+    // connection.on("ackMessages", (ack: AckMessagesModel) => dispatch(setMessageAcked(ack)))
 
     connection.onreconnecting(() => dispatch(setHubConnectionState(connection.state)));
     connection.onreconnected(() => {
@@ -97,7 +118,8 @@ export const MessagesContextProvider: FC = ({ children }) => {
         <MessagesContext.Provider value={{
             indicateTyping: throttledIndicateTyping,
             sendMessage: send,
-            fetchMessages: fetchMessages
+            fetchMessages: fetchMessages,
+            hubConnectionState: connection.state,
         }}>
             {children}
         </MessagesContext.Provider>
@@ -112,5 +134,3 @@ export const useMessages = () => {
 
     throw Error('Context undefined? Forgot a provider somewhere?')
 }
-
-
