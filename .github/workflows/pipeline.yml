@@ -79,7 +79,7 @@ jobs:
 
       - name: Create appservice package
         run: |
-          mkdir backend/wwwroot && cp -r frontend/* backend/wwwroot/ && (cd backend && zip -r ../app.zip .
+          mkdir backend/wwwroot && cp -r frontend/* backend/wwwroot/ && (cd backend && zip -r ../app.zip .)
 
       - name: Upload app artifact
         uses: actions/upload-artifact@v3
