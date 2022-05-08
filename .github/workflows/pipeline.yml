@@ -90,13 +90,14 @@ jobs:
 
 
 
-  publish:
+  deploy:
+    environment: signalrapp_test
     runs-on: ubuntu-latest
     needs: [merge]
     steps:     
       - uses: azure/login@v1
         with:
-          creds: ${{ secrets.AZURE_CREDENTIALS }}
-    # publish
+          creds: ${{ secrets.AZURE_CREDENTIALS_APPRG }}
+    
 
 
