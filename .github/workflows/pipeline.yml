@@ -100,3 +100,7 @@ jobs:
       - uses: azure/login@v1
         with:
           creds: ${{ secrets.AZURE_CREDENTIALS_APPRG }}
+
+      - name: Deploy appservice
+        run: |
+          az webapp deployment source config-zip --resource-group '${{ secrets.RG_NAME }}' --name '${{ secrets.APPSERVICE_NAME }}' --src app.zip
