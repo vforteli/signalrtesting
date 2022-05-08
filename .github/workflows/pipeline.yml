@@ -88,16 +88,15 @@ jobs:
           path: |
             app.zip
 
-
-
   deploy:
     environment: signalrapp_test
     runs-on: ubuntu-latest
     needs: [merge]
-    steps:     
+    steps:
+      - uses: actions/download-artifact@v3
+        with:
+          name: app
+
       - uses: azure/login@v1
         with:
           creds: ${{ secrets.AZURE_CREDENTIALS_APPRG }}
-    
-
-
