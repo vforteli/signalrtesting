@@ -26,4 +26,4 @@ jobs:
           --name apprg \
           --resource-group '${{ secrets.RG_NAME }}' \
           --template-file appservicestuff.bicep \
-          --parameters '${{ secrets.APP_SETTINGS }}'
+          --parameters ${{ secrets.APP_SETTINGS }}
