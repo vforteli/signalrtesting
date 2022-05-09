@@ -23,7 +23,7 @@ jobs:
         working-directory: bicep/
         run: |
           az deployment group what-if \
-          --mode complete
+          --mode complete \
           --name apprg \
           --resource-group '${{ secrets.RG_NAME }}' \
           --template-file appservicestuff.bicep \

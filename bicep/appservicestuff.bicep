@@ -18,7 +18,7 @@ param FrontendOptions__REACT_APP_AUTH_DOMAIN string
 param FrontendOptions__REACT_APP_AUTH_SCOPE string
 param FrontendOptions__REACT_APP_BACKEND_URL string = ''
 param FrontendOptions__REACT_APP_SIGNALR_HUB_URL string
-
+ 
 var appServiceName = '${AppName}-appservice'
 var redisCacheName = '${AppName}-rediscache'
 var serverFarmName = '${AppName}-asp'
