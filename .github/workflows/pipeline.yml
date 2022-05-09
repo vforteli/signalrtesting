@@ -20,7 +20,7 @@ jobs:
           dotnet-version: 6.0.x
 
       - name: Restore dependencies
-        run: dotnet restore
+        run: dotnet restore --locked-mode
         working-directory: backend/
 
       - name: Build backend
