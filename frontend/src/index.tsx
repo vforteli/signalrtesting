@@ -15,6 +15,7 @@ import { createTheme, ThemeProvider } from '@mui/material';
 import { getNonceFromCookie } from './Utils';
 import createCache from '@emotion/cache';
 import { CacheProvider } from '@emotion/react';
+import { AppConfig } from './appConfig';
 
 
 const store = configureStore({
@@ -38,10 +39,10 @@ ReactDOM.render(
     <Provider store={store}>
       <BrowserRouter>
         <Auth0Provider
-          domain={process.env.REACT_APP_AUTH_DOMAIN ?? ''}
-          clientId={process.env.REACT_APP_AUTH_CLIENT_ID ?? ''}
+          domain={AppConfig.REACT_APP_AUTH_DOMAIN}
+          clientId={AppConfig.REACT_APP_AUTH_CLIENT_ID}
           redirectUri={window.location.origin}
-          audience={process.env.REACT_APP_AUTH_AUDIENCE ?? ''}
+          audience={AppConfig.REACT_APP_AUTH_AUDIENCE}
           cacheLocation='localstorage'
           scope='openid profile email'
         >

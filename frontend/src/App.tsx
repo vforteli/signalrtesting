@@ -11,15 +11,17 @@ import AppHeader from './Components/Header/Header';
 import HubNotificationMessage from './Components/HubNotificationMessage';
 import MessageContainer from './Components/Messages/MessageContainer';
 import { MessagesContextProvider } from './Components/Messages/MessagesContext';
+import { AppConfig } from './appConfig';
 import { setCurrentUser } from './store/authentication/authenticationSlice';
 import { getDefaultHeaders } from './Utils';
 
-OpenAPI.BASE = process.env.REACT_APP_BACKEND_URL ?? ''
+
 
 function App() {
   const dispatch = useDispatch()
   const { isAuthenticated, getAccessTokenSilently, user } = useAuth0()
 
+  OpenAPI.BASE = AppConfig.REACT_APP_BACKEND_URL
   OpenAPI.TOKEN = getAccessTokenSilently
   OpenAPI.HEADERS = getDefaultHeaders
 

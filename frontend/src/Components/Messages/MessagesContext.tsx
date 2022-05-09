@@ -5,6 +5,7 @@ import { createContext, FC, useContext, useEffect } from 'react'
 import { useDispatch } from 'react-redux';
 import { MessageModel, MessageService } from '../../apiclient';
 import { MessageHubClient } from '../../hubclient/MessageHubConnection';
+import { AppConfig } from '../../appConfig';
 import { fetchMessagesFulfilled, fetchMessagesPending, messageDeleted, messageReceived, messagesCleared, sendMessage, sendMessageFulfilled, setMessageAcked, setTyping } from '../../store/messages/messagesSlice';
 import { setHubConnectionState } from '../../store/messages/signalrSlice';
 import { getCsrfTokenFromCookie } from '../../Utils';
@@ -35,7 +36,7 @@ export const MessagesContextProvider: FC = ({ children }) => {
 
     const connection = new HubConnectionBuilder()
         .withAutomaticReconnect()
-        .withUrl(process.env.REACT_APP_SIGNALR_HUB_URL ?? '', { accessTokenFactory: getAccessTokenSilently, headers: { 'X-XSRF-TOKEN': getCsrfTokenFromCookie() ?? '' } })
+        .withUrl(AppConfig.REACT_APP_SIGNALR_HUB_URL, { accessTokenFactory: getAccessTokenSilently, headers: { 'X-XSRF-TOKEN': getCsrfTokenFromCookie() ?? '' } })
         .build()
 
     const messageHubClient = new MessageHubClient(connection)
