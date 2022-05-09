@@ -83,6 +83,7 @@ resource appService 'Microsoft.Web/sites@2020-12-01' = {
   properties: {
     httpsOnly: true
     siteConfig: {
+      vnetRouteAllEnabled: true
       linuxFxVersion: 'DOTNETCORE|6.0'
       httpLoggingEnabled: true
       detailedErrorLoggingEnabled: true
@@ -147,16 +148,6 @@ resource appService 'Microsoft.Web/sites@2020-12-01' = {
     properties: {
       swiftSupported: true
       subnetResourceId: vnetModule.outputs.AppSubnetResourceId
-    }
-  }
-
-  resource config 'config@2021-02-01' = {
-    name: 'web'
-    dependsOn: [
-      networkConfig
-    ]
-    properties: {
-      vnetRouteAllEnabled: true
     }
   }
 }
