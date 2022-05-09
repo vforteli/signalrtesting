@@ -25,6 +25,7 @@ var serverFarmName = '${AppName}-asp'
 var storageAccountName = '${AppName}storage'
 var signalRRoleDefinitionId = '/subscriptions/${subscription().subscriptionId}/providers/Microsoft.Authorization/roleDefinitions/420fcaa2-552c-430f-98ca-3264be4806c7'
 var storageDataContributorRoleDefinitionId = '/subscriptions/${subscription().subscriptionId}/providers/Microsoft.Authorization/roleDefinitions/ba92f5b4-2d11-453d-a403-e96b0029c9fe'
+var appInsightsRoleDefinitionId = '/subscriptions/${subscription().subscriptionId}/providers/Microsoft.Authorization/roleDefinitions/3913510d-42f4-4e42-8a64-420c390055eb'
 var signalrServiceName = '${AppName}-signalr'
 
 module vnetModule 'modules/vnetModule.bicep' = {
@@ -55,6 +56,7 @@ resource appInsights 'Microsoft.Insights/components@2020-02-02' = {
   properties: {
     Application_Type: 'web'
     WorkspaceResourceId: workspace.id
+    DisableLocalAuth: true
   }
 }
 
@@ -103,10 +105,6 @@ resource appService 'Microsoft.Web/sites@2020-12-01' = {
       httpLoggingEnabled: true
       detailedErrorLoggingEnabled: true
       appSettings: [
-        {
-          'name': 'APPINSIGHTS_INSTRUMENTATIONKEY'
-          'value': appInsights.properties.InstrumentationKey
-        }
         {
           name: 'SignalRConnectionString'
           value: 'Endpoint=https://${signalrServiceName}.service.signalr.net;AuthType=aad;Version=1.0;'
@@ -233,6 +231,16 @@ resource backendStorageAccountRoleAssignment 'Microsoft.Authorization/roleAssign
   properties: {
     principalId: reference(appService.id, '2018-02-01', 'Full').identity.principalId
     roleDefinitionId: storageDataContributorRoleDefinitionId
+    principalType: 'ServicePrincipal'
+  }
+}
+
+resource appInsightsPublisherRoleAssignment 'Microsoft.Authorization/roleAssignments@2020-10-01-preview' = {
+  name: guid(resourceGroup().id, appInsights.name, appInsightsRoleDefinitionId, 'foo')
+  scope: appInsights
+  properties: {
+    principalId: reference(appService.id, '2018-02-01', 'Full').identity.principalId
+    roleDefinitionId: appInsightsRoleDefinitionId
     principalType: 'ServicePrincipal'
   }
 }
