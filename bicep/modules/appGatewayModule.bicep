@@ -1,5 +1,6 @@
 param CustomDomain string
 param AppServiceName string
+param Location string
 
 @secure()
 param FrontendCertificatePfxBase64 string
@@ -23,7 +24,7 @@ var gatewayCertificateName = 'appgatewaycertname'
 
 resource appGatewayVnet 'Microsoft.Network/virtualNetworks@2021-03-01' = {
   name: 'appgatewayvnet'
-  location: resourceGroup().location
+  location: Location
   properties: {
     addressSpace: {
       addressPrefixes: [
@@ -43,7 +44,7 @@ resource appGatewayVnet 'Microsoft.Network/virtualNetworks@2021-03-01' = {
 
 resource appGatewayIpAddress 'Microsoft.Network/publicIPAddresses@2021-03-01' = {
   name: 'appGatewayIp'
-  location: resourceGroup().location
+  location: Location
   sku: {
     name: 'Standard'
   }
@@ -54,10 +55,7 @@ resource appGatewayIpAddress 'Microsoft.Network/publicIPAddresses@2021-03-01' = 
 
 resource appGateway 'Microsoft.Network/applicationGateways@2021-03-01' = {
   name: appGatewayName
-  location: resourceGroup().location
-  dependsOn: [
-    appGatewayIpAddress
-  ]
+  location: Location
   properties: {
     sku: {
       name: 'Standard_v2'

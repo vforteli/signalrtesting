@@ -179,6 +179,7 @@ module customDomain 'modules/customDomainModule.bicep' = if (length(CustomDomain
     AppServiceName: appService.name
     CustomDomain: CustomDomain
     ServerFarmId: serverFarm.id
+    Location: Location
   }
 }
 
@@ -192,6 +193,7 @@ module appGateway 'modules/appGatewayModule.bicep' = if (length(CustomDomain) > 
     CustomDomain: CustomDomain
     FrontendCertificatePassword: FrontendCertificatePassword
     FrontendCertificatePfxBase64: FrontendCertificatePfxBase64
+    Location: Location
   }
 }
 

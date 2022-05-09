@@ -1,10 +1,11 @@
 param CustomDomain string
 param ServerFarmId string
 param AppServiceName string
+param Location string
 
 resource customDomainCertificate 'Microsoft.Web/certificates@2021-02-01' = {
   name: CustomDomain
-  location: resourceGroup().location
+  location: Location
   properties: {
     canonicalName: CustomDomain
     serverFarmId: ServerFarmId
