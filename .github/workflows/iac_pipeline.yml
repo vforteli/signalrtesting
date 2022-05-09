@@ -35,4 +35,7 @@ jobs:
           --parameters FrontendOptions__REACT_APP_AUTH_CLIENT_ID="${{ secrets.REACT_APP_AUTH_CLIENT_ID }}" \
           --parameters FrontendOptions__REACT_APP_AUTH_AUDIENCE="${{ secrets.REACT_APP_AUTH_AUDIENCE }}" \
           --parameters FrontendOptions__REACT_APP_AUTH_SCOPE="${{ secrets.REACT_APP_AUTH_SCOPE }}" \
-          --parameters FrontendOptions__REACT_APP_SIGNALR_HUB_URL="${{ secrets.REACT_APP_SIGNALR_HUB_URL }}"
+          --parameters FrontendOptions__REACT_APP_SIGNALR_HUB_URL="${{ secrets.REACT_APP_SIGNALR_HUB_URL }}" \
+          --parameters Auth0__Audience="${{ secrets.Auth0__Audience }}" \
+          --parameters Auth0__Authority="${{ secrets.Auth0__Authority }}" \
+          --parameters CspPolicy="${{ secrets.CspPolicy }}"
