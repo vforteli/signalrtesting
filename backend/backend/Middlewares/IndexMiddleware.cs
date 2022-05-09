@@ -4,7 +4,6 @@ using Microsoft.AspNetCore.WebUtilities;
 using System.ComponentModel.DataAnnotations;
 using System.IO;
 using System.Security.Cryptography;
-using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
 
@@ -65,13 +64,7 @@ namespace backend
             var content = _indexFileContent.Replace("{{nonce}}", cspNonce);
 
             // todo this if of course not very optimized, but here for pocing
-            var sb = new StringBuilder();
-            foreach (var property in _frontendOptions.GetType().GetProperties())
-            {
-                sb.Append($"{property.Name}: \"{property.GetValue(_frontendOptions)?.ToString()}\",\n");
-            }
-
-            content = content.Replace("window._env_={}", $"window._env_ = \n{{{sb}}}\n");
+            content = content.Replace("window._env_={}", $"window._env_ = {JsonSerializer.Serialize(_frontendOptions)}");
 
             await context.Response.WriteAsync(content);
             await context.Response.CompleteAsync();
