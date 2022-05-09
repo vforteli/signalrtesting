@@ -1,0 +1,22 @@
+name: signalrapptest_iac
+
+on:
+  push:
+    branches: [master]
+    paths:
+      - bicep
+  # pull_request:
+  #   branches: [master]
+
+jobs:
+  deploy:
+    environment: signalrapp_test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS_APPRG }}
+
+      - name: Deploy bicep
+        run: |
+          echo "foo"

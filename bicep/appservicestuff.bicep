@@ -1,7 +1,8 @@
 param AppName string
 param DeployRedis bool = false
-param DeployAppGateway bool = true
+param DeployAppGateway bool = false
 param CustomDomain string = ''
+param Location string = resourceGroup().location
 
 @secure()
 param FrontendCertificatePfxBase64 string = ''
@@ -17,7 +18,7 @@ var storageDataContributorRoleDefinitionId = '/subscriptions/${subscription().su
 var signalrServiceName = '${AppName}-signalr'
 
 resource backendSignalRRoleAssignment 'Microsoft.Authorization/roleAssignments@2020-08-01-preview' = {
-  name: '${guid(resourceGroup().id, signalrServiceName, signalRRoleDefinitionId, 'foo')}'
+  name: guid(resourceGroup().id, signalrServiceName, signalRRoleDefinitionId, 'foo')
   scope: signalrService
   properties: {
     principalId: reference(appService.id, '2018-02-01', 'Full').identity.principalId
@@ -27,7 +28,7 @@ resource backendSignalRRoleAssignment 'Microsoft.Authorization/roleAssignments@2
 }
 
 resource backendStorageAccountRoleAssignment 'Microsoft.Authorization/roleAssignments@2020-08-01-preview' = {
-  name: '${guid(resourceGroup().id, appServiceName, storageDataContributorRoleDefinitionId, 'foo')}'
+  name: guid(resourceGroup().id, appServiceName, storageDataContributorRoleDefinitionId, 'foo')
   scope: storageAccount
   properties: {
     principalId: reference(appService.id, '2018-02-01', 'Full').identity.principalId
@@ -38,7 +39,7 @@ resource backendStorageAccountRoleAssignment 'Microsoft.Authorization/roleAssign
 
 resource vnet 'Microsoft.Network/virtualNetworks@2021-03-01' = {
   name: '${AppName}appvnet'
-  location: resourceGroup().location
+  location: Location
   properties: {
     addressSpace: {
       addressPrefixes: [
@@ -66,7 +67,7 @@ resource vnet 'Microsoft.Network/virtualNetworks@2021-03-01' = {
 
 resource storageAccount 'Microsoft.Storage/storageAccounts@2021-04-01' = {
   name: storageAccountName
-  location: resourceGroup().location
+  location: Location
   sku: {
     name: 'Standard_ZRS'
   }
@@ -79,7 +80,7 @@ resource storageAccount 'Microsoft.Storage/storageAccounts@2021-04-01' = {
 }
 
 resource serverFarm 'Microsoft.Web/serverfarms@2020-12-01' = {
-  location: resourceGroup().location
+  location: Location
   name: serverFarmName
   kind: 'linux'
   properties: {
@@ -95,7 +96,7 @@ resource serverFarm 'Microsoft.Web/serverfarms@2020-12-01' = {
 
 resource appService 'Microsoft.Web/sites@2020-12-01' = {
   name: appServiceName
-  location: resourceGroup().location
+  location: Location
   tags: {}
   identity: {
     type: 'SystemAssigned'
@@ -146,7 +147,7 @@ resource appService 'Microsoft.Web/sites@2020-12-01' = {
   }
 }
 
-module customDomain 'customDomainModule.bicep' = if (length(CustomDomain) > 0) {
+module customDomain 'modules/customDomainModule.bicep' = if (length(CustomDomain) > 0) {
   name: 'customDomain'
   params: {
     AppServiceName: appService.name
@@ -155,7 +156,7 @@ module customDomain 'customDomainModule.bicep' = if (length(CustomDomain) > 0) {
   }
 }
 
-module appGateway 'appGatewayModule.bicep' = if (length(CustomDomain) > 0 && DeployAppGateway) {
+module appGateway 'modules/appGatewayModule.bicep' = if (length(CustomDomain) > 0 && DeployAppGateway) {
   name: 'appGateway'
   dependsOn: [
     customDomain
@@ -170,7 +171,7 @@ module appGateway 'appGatewayModule.bicep' = if (length(CustomDomain) > 0 && Dep
 
 resource redisCache 'Microsoft.Cache/redis@2020-06-01' = if (DeployRedis) {
   name: redisCacheName
-  location: resourceGroup().location
+  location: Location
   properties: {
     sku: {
       name: 'Basic'
@@ -184,7 +185,7 @@ resource redisCache 'Microsoft.Cache/redis@2020-06-01' = if (DeployRedis) {
 }
 
 resource signalrService 'Microsoft.SignalRService/signalR@2020-07-01-preview' = {
-  location: resourceGroup().location
+  location: Location
   name: signalrServiceName
   sku: {
     name: 'Free_F1'

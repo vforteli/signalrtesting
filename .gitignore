@@ -404,3 +404,5 @@ backend/backend/Properties/ServiceDependencies/tikalii-appservice - Web Deploy/p
 backend/backend/Properties/ServiceDependencies/tikalii-appservice - Zip Deploy/profile.arm.json
 
 bicep/appservicestuff.parameters.json
+
+secrets.txt
