@@ -22,8 +22,17 @@ jobs:
       - name: Deploy bicep
         working-directory: bicep/
         run: |
-          az deployment group what-if   \
+          az deployment group what-if \
+          --mode complete
           --name apprg \
           --resource-group '${{ secrets.RG_NAME }}' \
           --template-file appservicestuff.bicep \
-          --parameters ${{ secrets.APP_SETTINGS }}
+          --parameters AppName="${{ secrets.AppName }}" \
+          --parameters CustomDomain="${{ secrets.CustomDomain }}" \
+          --parameters FrontendCertificatePassword="${{ secrets.FrontendCertificatePassword }}" \
+          --parameters FrontendCertificatePfxBase64="${{ secrets.FrontendCertificatePfxBase64 }}" \
+          --parameters FrontendOptions__REACT_APP_AUTH_DOMAIN="${{ secrets.REACT_APP_AUTH_DOMAIN }}" \
+          --parameters FrontendOptions__REACT_APP_AUTH_CLIENT_ID="${{ secrets.REACT_APP_AUTH_CLIENT_ID }}" \
+          --parameters FrontendOptions__REACT_APP_AUTH_AUDIENCE="${{ secrets.REACT_APP_AUTH_AUDIENCE }}" \
+          --parameters FrontendOptions__REACT_APP_AUTH_SCOPE="${{ secrets.REACT_APP_AUTH_SCOPE }}" \
+          --parameters FrontendOptions__REACT_APP_SIGNALR_HUB_URL="${{ secrets.REACT_APP_SIGNALR_HUB_URL }}"

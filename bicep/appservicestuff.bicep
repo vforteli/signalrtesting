@@ -16,7 +16,7 @@ param FrontendOptions__REACT_APP_AUTH_AUDIENCE string
 param FrontendOptions__REACT_APP_AUTH_CLIENT_ID string
 param FrontendOptions__REACT_APP_AUTH_DOMAIN string
 param FrontendOptions__REACT_APP_AUTH_SCOPE string
-param FrontendOptions__REACT_APP_BACKEND_URL string
+param FrontendOptions__REACT_APP_BACKEND_URL string = ''
 param FrontendOptions__REACT_APP_SIGNALR_HUB_URL string
 
 var appServiceName = '${AppName}-appservice'
@@ -193,7 +193,7 @@ module appGateway 'modules/appGatewayModule.bicep' = if (length(CustomDomain) > 
     CustomDomain: CustomDomain
     FrontendCertificatePassword: FrontendCertificatePassword
     FrontendCertificatePfxBase64: FrontendCertificatePfxBase64
-    Location: Location 
+    Location: Location
   }
 }
 
