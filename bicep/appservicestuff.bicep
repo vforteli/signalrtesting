@@ -17,7 +17,6 @@ var signalRRoleDefinitionId = '/subscriptions/${subscription().subscriptionId}/p
 var storageDataContributorRoleDefinitionId = '/subscriptions/${subscription().subscriptionId}/providers/Microsoft.Authorization/roleDefinitions/ba92f5b4-2d11-453d-a403-e96b0029c9fe'
 var signalrServiceName = '${AppName}-signalr'
 
-// blep
 resource backendSignalRRoleAssignment 'Microsoft.Authorization/roleAssignments@2020-08-01-preview' = {
   name: guid(resourceGroup().id, signalrServiceName, signalRRoleDefinitionId, 'foo')
   scope: signalrService
