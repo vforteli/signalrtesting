@@ -37,31 +37,11 @@ resource backendStorageAccountRoleAssignment 'Microsoft.Authorization/roleAssign
   }
 }
 
-resource vnet 'Microsoft.Network/virtualNetworks@2021-03-01' = {
-  name: '${AppName}appvnet'
-  location: Location
-  properties: {
-    addressSpace: {
-      addressPrefixes: [
-        '10.0.0.0/23'
-      ]
-    }
-    subnets: [
-      {
-        name: 'appsubnet'
-        properties: {
-          addressPrefix: '10.0.0.0/24'
-          delegations: [
-            {
-              name: 'delegation'
-              properties: {
-                serviceName: 'Microsoft.Web/serverFarms'
-              }
-            }
-          ]
-        }
-      }
-    ]
+module vnetModule 'modules/vnetModule.bicep' = {
+  name: 'vnetModule'
+  params: {
+    AppName: AppName
+    Location: Location
   }
 }
 
@@ -168,7 +148,7 @@ resource appService 'Microsoft.Web/sites@2020-12-01' = {
     name: 'virtualNetwork'
     properties: {
       swiftSupported: true
-      subnetResourceId: vnet.properties.subnets[0].id
+      subnetResourceId: vnetModule.outputs.AppSubnetResourceId
     }
   }
 
