@@ -44,8 +44,8 @@
   },
   "scripts": {
     "start": "react-scripts start",
-    "build": "set INLINE_RUNTIME_CHUNK=false&&react-scripts build",
-    "buildlocal": "set INLINE_RUNTIME_CHUNK=false&&react-scripts build && copyfiles -u 1 build/**/* backend/backend/wwwroot",
+    "build": "react-scripts build",
+    "buildlocal": "react-scripts build && copyfiles -u 1 build/**/* backend/backend/wwwroot",
     "test": "react-scripts test",
     "generate-apiclient": "openapi --input http://localhost:5000/swagger/v1/swagger.json --output ./src/apiclient"
   },

@@ -76,7 +76,9 @@ public class Program
             endpoints.MapControllers();
         });
 
-        app.UseIndex(new IndexMiddlewareOptions(builder.Configuration["CspPolicy"], Path.Combine(builder.Environment.WebRootPath, "index.html")));
+        var frontendOptions = builder.Configuration.GetSection("FrontendOptions").GetAndValidate<FrontendOptions>();
+
+        app.UseIndex(new IndexMiddlewareOptions(builder.Configuration["CspPolicy"], Path.Combine(builder.Environment.WebRootPath, "index.html")), frontendOptions);
 
         app.Run();
     }

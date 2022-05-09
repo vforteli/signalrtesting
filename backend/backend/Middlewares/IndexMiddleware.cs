@@ -1,24 +1,52 @@
 ﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.WebUtilities;
+using System.ComponentModel.DataAnnotations;
 using System.IO;
 using System.Security.Cryptography;
+using System.Text.Json;
 using System.Threading.Tasks;
 
 namespace backend
 {
-    public record IndexMiddlewareOptions(string CspPolicy, string IndexFilePath);
+    public record IndexMiddlewareOptions(
+        string CspPolicy,
+        string IndexFilePath
+        );
+
+    public record FrontendOptions
+    {
+        [Required(AllowEmptyStrings = false)]
+        public string REACT_APP_AUTH_DOMAIN { get; init; } = "";
+
+        [Required(AllowEmptyStrings = false)]
+        public string REACT_APP_AUTH_CLIENT_ID { get; init; } = "";
+
+        [Required(AllowEmptyStrings = false)]
+        public string REACT_APP_AUTH_AUDIENCE { get; init; } = "";
+
+        [Required(AllowEmptyStrings = false)]
+        public string REACT_APP_AUTH_SCOPE { get; init; } = "";
+
+        [Required(AllowEmptyStrings = false)]
+        public string REACT_APP_SIGNALR_HUB_URL { get; init; } = "";
+
+        public string REACT_APP_BACKEND_URL { get; init; } = "";
+    }
+
 
     public class IndexMiddleware
     {
         private readonly string _cspPolicy;
         private readonly string _indexFileContent;
+        private readonly FrontendOptions _frontendOptions;
 
-        public IndexMiddleware(RequestDelegate next, IndexMiddlewareOptions options)
+        public IndexMiddleware(RequestDelegate next, IndexMiddlewareOptions options, FrontendOptions frontendOptions)
         {
             _ = next;
             _cspPolicy = options.CspPolicy;
             _indexFileContent = File.ReadAllText(options.IndexFilePath);
+            _frontendOptions = frontendOptions;
         }
 
         public async Task InvokeAsync(HttpContext context)
@@ -32,7 +60,13 @@ namespace backend
             context.Response.Cookies.Append("XSRF-TOKEN", csrfToken, new CookieOptions { IsEssential = true, SameSite = SameSiteMode.Strict, Secure = true });
 
             context.Response.ContentType = "text/html";
-            await context.Response.WriteAsync(_indexFileContent.Replace("{{nonce}}", cspNonce));
+
+            var content = _indexFileContent.Replace("{{nonce}}", cspNonce);
+
+            // todo this if of course not very optimized, but here for pocing
+            content = content.Replace("window._env_={}", $"window._env_ = {JsonSerializer.Serialize(_frontendOptions)}");
+
+            await context.Response.WriteAsync(content);
             await context.Response.CompleteAsync();
         }
     }
@@ -46,6 +80,6 @@ namespace backend
         /// <param name="builder"></param>
         /// <param name="options"></param>
         /// <returns></returns>
-        public static IApplicationBuilder UseIndex(this IApplicationBuilder builder, IndexMiddlewareOptions options) => builder.UseMiddleware<IndexMiddleware>(options);
+        public static IApplicationBuilder UseIndex(this IApplicationBuilder builder, IndexMiddlewareOptions options, FrontendOptions frontendOptions) => builder.UseMiddleware<IndexMiddleware>(options, frontendOptions);
     }
 }
