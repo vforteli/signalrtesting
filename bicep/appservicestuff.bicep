@@ -9,6 +9,16 @@ param FrontendCertificatePfxBase64 string = ''
 @secure()
 param FrontendCertificatePassword string = ''
 
+param Auth0__Audience string
+param Auth0__Authority string
+param CspPolicy string
+param FrontendOptions__REACT_APP_AUTH_AUDIENCE string
+param FrontendOptions__REACT_APP_AUTH_CLIENT_ID string
+param FrontendOptions__REACT_APP_AUTH_DOMAIN string
+param FrontendOptions__REACT_APP_AUTH_SCOPE string
+param FrontendOptions__REACT_APP_BACKEND_URL string
+param FrontendOptions__REACT_APP_SIGNALR_HUB_URL string
+
 var appServiceName = '${AppName}-appservice'
 var redisCacheName = '${AppName}-rediscache'
 var serverFarmName = '${AppName}-asp'
@@ -99,39 +109,39 @@ resource appService 'Microsoft.Web/sites@2020-12-01' = {
         }
         {
           name: 'Auth0__Audience'
-          value: ''
+          value: Auth0__Audience
         }
         {
           name: 'Auth0__Authority'
-          value: ''
+          value: Auth0__Authority
         }
         {
           name: 'CspPolicy'
-          value: ''
+          value: CspPolicy
         }
         {
           name: 'FrontendOptions__REACT_APP_AUTH_AUDIENCE'
-          value: ''
+          value: FrontendOptions__REACT_APP_AUTH_AUDIENCE
         }
         {
           name: 'FrontendOptions__REACT_APP_AUTH_CLIENT_ID'
-          value: ''
+          value: FrontendOptions__REACT_APP_AUTH_CLIENT_ID
         }
         {
           name: 'FrontendOptions__REACT_APP_AUTH_DOMAIN'
-          value: ''
+          value: FrontendOptions__REACT_APP_AUTH_DOMAIN
         }
         {
           name: 'FrontendOptions__REACT_APP_AUTH_SCOPE'
-          value: ''
+          value: FrontendOptions__REACT_APP_AUTH_SCOPE
         }
         {
           name: 'FrontendOptions__REACT_APP_BACKEND_URL'
-          value: ''
+          value: FrontendOptions__REACT_APP_BACKEND_URL
         }
         {
           name: 'FrontendOptions__REACT_APP_SIGNALR_HUB_URL'
-          value: ''
+          value: FrontendOptions__REACT_APP_SIGNALR_HUB_URL
         }
       ]
       webSocketsEnabled: true
