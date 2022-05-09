@@ -35,6 +35,14 @@ module vnetModule 'modules/vnetModule.bicep' = {
   }
 }
 
+module signalrServiceModule 'modules/signalrServiceModule.bicep' = {
+  name: 'signalrServiceModule'
+  params: {
+    Location: Location
+    SignalRServiceName: signalrServiceName
+  }
+}
+
 resource storageAccount 'Microsoft.Storage/storageAccounts@2021-04-01' = {
   name: storageAccountName
   location: Location
@@ -197,6 +205,9 @@ resource signalrService 'Microsoft.SignalRService/signalR@2022-02-01' existing =
 }
 
 resource backendSignalRRoleAssignment 'Microsoft.Authorization/roleAssignments@2020-08-01-preview' = {
+  dependsOn: [
+    signalrServiceModule
+  ]
   name: guid(resourceGroup().id, signalrServiceName, signalRRoleDefinitionId, 'foo')
   scope: signalrService
   properties: {
