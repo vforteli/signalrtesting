@@ -4,7 +4,7 @@ on:
   push:
     branches: [master]
     paths:
-      - 'bicep/**'
+      - "bicep/**"
   # pull_request:
   #   branches: [master]
 
@@ -13,10 +13,17 @@ jobs:
     environment: signalrapp_test
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v3
+      
       - uses: azure/login@v1
         with:
           creds: ${{ secrets.AZURE_CREDENTIALS_APPRG }}
 
       - name: Deploy bicep
+        working-directory: bicep/
         run: |
-          echo "foo"
+          az deployment group what-if   \
+          --name apprg \
+          --resource-group '${{ secrets.RG_NAME }}' \
+          --template-file appservicestuff.bicep \
+          --parameters foo="bar"

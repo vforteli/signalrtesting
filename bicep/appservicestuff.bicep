@@ -1,9 +1,9 @@
 param AppName string
+
 param DeployRedis bool = false
 param DeployAppGateway bool = false
 param CustomDomain string = ''
 param Location string = resourceGroup().location
-
 @secure()
 param FrontendCertificatePfxBase64 string = ''
 @secure()
@@ -116,6 +116,42 @@ resource appService 'Microsoft.Web/sites@2020-12-01' = {
         {
           name: 'StorageAccountConnectionString'
           value: storageAccount.properties.primaryEndpoints.dfs
+        }
+        {
+          name: 'Auth0__Audience'
+          value: ''
+        }
+        {
+          name: 'Auth0__Authority'
+          value: ''
+        }
+        {
+          name: 'CspPolicy'
+          value: ''
+        }
+        {
+          name: 'FrontendOptions__REACT_APP_AUTH_AUDIENCE'
+          value: ''
+        }
+        {
+          name: 'FrontendOptions__REACT_APP_AUTH_CLIENT_ID'
+          value: ''
+        }
+        {
+          name: 'FrontendOptions__REACT_APP_AUTH_DOMAIN'
+          value: ''
+        }
+        {
+          name: 'FrontendOptions__REACT_APP_AUTH_SCOPE'
+          value: ''
+        }
+        {
+          name: 'FrontendOptions__REACT_APP_BACKEND_URL'
+          value: ''
+        }
+        {
+          name: 'FrontendOptions__REACT_APP_SIGNALR_HUB_URL'
+          value: ''
         }
       ]
       webSocketsEnabled: true
