@@ -193,7 +193,7 @@ module appGateway 'modules/appGatewayModule.bicep' = if (length(CustomDomain) > 
     CustomDomain: CustomDomain
     FrontendCertificatePassword: FrontendCertificatePassword
     FrontendCertificatePfxBase64: FrontendCertificatePfxBase64
-    Location: Location
+    Location: Location 
   }
 }
 
