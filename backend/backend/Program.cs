@@ -16,6 +16,7 @@ public class Program
     {
         var builder = WebApplication.CreateBuilder(args);
 
+        builder.Services.AddApplicationInsightsTelemetry();
         builder.Services.AddCors();
         builder.Services.AddControllers();
         builder.Services.AddSwaggerGen(c =>

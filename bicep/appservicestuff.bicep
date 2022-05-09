@@ -43,6 +43,21 @@ module signalrServiceModule 'modules/signalrServiceModule.bicep' = {
   }
 }
 
+resource workspace 'Microsoft.OperationalInsights/workspaces@2021-06-01' = {
+  name: '${AppName}-workspace'
+  location: Location
+}
+
+resource appInsights 'Microsoft.Insights/components@2020-02-02' = {
+  name: '${AppName}-appinsights'
+  location: Location
+  kind: 'web'
+  properties: {
+    Application_Type: 'web'
+    WorkspaceResourceId: workspace.id
+  }
+}
+
 resource storageAccount 'Microsoft.Storage/storageAccounts@2021-04-01' = {
   name: storageAccountName
   location: Location
@@ -88,6 +103,10 @@ resource appService 'Microsoft.Web/sites@2020-12-01' = {
       httpLoggingEnabled: true
       detailedErrorLoggingEnabled: true
       appSettings: [
+        {
+          'name': 'APPINSIGHTS_INSTRUMENTATIONKEY'
+          'value': appInsights.properties.InstrumentationKey
+        }
         {
           name: 'SignalRConnectionString'
           value: 'Endpoint=https://${signalrServiceName}.service.signalr.net;AuthType=aad;Version=1.0;'
