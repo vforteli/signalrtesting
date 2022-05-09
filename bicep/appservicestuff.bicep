@@ -27,26 +27,6 @@ var signalRRoleDefinitionId = '/subscriptions/${subscription().subscriptionId}/p
 var storageDataContributorRoleDefinitionId = '/subscriptions/${subscription().subscriptionId}/providers/Microsoft.Authorization/roleDefinitions/ba92f5b4-2d11-453d-a403-e96b0029c9fe'
 var signalrServiceName = '${AppName}-signalr'
 
-resource backendSignalRRoleAssignment 'Microsoft.Authorization/roleAssignments@2020-08-01-preview' = {
-  name: guid(resourceGroup().id, signalrServiceName, signalRRoleDefinitionId, 'foo')
-  scope: signalrService
-  properties: {
-    principalId: reference(appService.id, '2018-02-01', 'Full').identity.principalId
-    roleDefinitionId: signalRRoleDefinitionId
-    principalType: 'ServicePrincipal'
-  }
-}
-
-resource backendStorageAccountRoleAssignment 'Microsoft.Authorization/roleAssignments@2020-08-01-preview' = {
-  name: guid(resourceGroup().id, appServiceName, storageDataContributorRoleDefinitionId, 'foo')
-  scope: storageAccount
-  properties: {
-    principalId: reference(appService.id, '2018-02-01', 'Full').identity.principalId
-    roleDefinitionId: storageDataContributorRoleDefinitionId
-    principalType: 'ServicePrincipal'
-  }
-}
-
 module vnetModule 'modules/vnetModule.bicep' = {
   name: 'vnetModule'
   params: {
@@ -212,55 +192,26 @@ resource redisCache 'Microsoft.Cache/redis@2020-06-01' = if (DeployRedis) {
   }
 }
 
-resource signalrService 'Microsoft.SignalRService/signalR@2020-07-01-preview' = {
-  location: Location
+resource signalrService 'Microsoft.SignalRService/signalR@2022-02-01' existing = {
   name: signalrServiceName
-  sku: {
-    name: 'Free_F1'
-    tier: 'Free'
-    capacity: 1
-  }
-  kind: 'SignalR'
-  identity: {
-    type: 'SystemAssigned'
-  }
+}
+
+resource backendSignalRRoleAssignment 'Microsoft.Authorization/roleAssignments@2020-08-01-preview' = {
+  name: guid(resourceGroup().id, signalrServiceName, signalRRoleDefinitionId, 'foo')
+  scope: signalrService
   properties: {
-    tls: {
-      clientCertEnabled: false
-    }
-    features: [
-      {
-        flag: 'ServiceMode'
-        value: 'Default'
-        properties: {}
-      }
-      {
-        flag: 'EnableConnectivityLogs'
-        value: 'True'
-        properties: {}
-      }
-      {
-        flag: 'EnableMessagingLogs'
-        value: 'False'
-        properties: {}
-      }
-    ]
-    cors: {
-      allowedOrigins: [
-        '*'
-      ]
-    }
-    upstream: {}
-    networkACLs: {
-      defaultAction: 'Deny'
-      publicNetwork: {
-        allow: [
-          'ServerConnection'
-          'ClientConnection'
-          'RESTAPI'
-        ]
-      }
-      privateEndpoints: []
-    }
+    principalId: reference(appService.id, '2018-02-01', 'Full').identity.principalId
+    roleDefinitionId: signalRRoleDefinitionId
+    principalType: 'ServicePrincipal'
+  }
+}
+
+resource backendStorageAccountRoleAssignment 'Microsoft.Authorization/roleAssignments@2020-08-01-preview' = {
+  name: guid(resourceGroup().id, appServiceName, storageDataContributorRoleDefinitionId, 'foo')
+  scope: storageAccount
+  properties: {
+    principalId: reference(appService.id, '2018-02-01', 'Full').identity.principalId
+    roleDefinitionId: storageDataContributorRoleDefinitionId
+    principalType: 'ServicePrincipal'
   }
 }
