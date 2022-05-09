@@ -1,6 +1,5 @@
 using Azure.Identity;
 using backend.Hubs;
-using Microsoft.ApplicationInsights.AspNetCore.Extensions;
 using Microsoft.ApplicationInsights.Extensibility;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
@@ -20,7 +19,7 @@ public class Program
         var builder = WebApplication.CreateBuilder(args);
         // todo fix this when verified
         builder.Services.Configure<TelemetryConfiguration>(config => config.SetAzureTokenCredential(new DefaultAzureCredential()));
-        builder.Services.AddApplicationInsightsTelemetry(new ApplicationInsightsServiceOptions { ConnectionString = "InstrumentationKey=00000000-0000-0000-0000-000000000000;IngestionEndpoint=https://westeurope-5.in.applicationinsights.azure.com/;LiveEndpoint=https://westeurope.livediagnostics.monitor.azure.com/" });
+        builder.Services.AddApplicationInsightsTelemetry();
 
         builder.Services.AddCors();
         builder.Services.AddControllers();

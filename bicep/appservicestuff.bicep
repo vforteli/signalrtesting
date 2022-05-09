@@ -106,6 +106,10 @@ resource appService 'Microsoft.Web/sites@2020-12-01' = {
       detailedErrorLoggingEnabled: true
       appSettings: [
         {
+          name: 'APPLICATIONINSIGHTS_CONNECTION_STRING'
+          value: appInsights.properties.ConnectionString
+        }
+        {
           name: 'SignalRConnectionString'
           value: 'Endpoint=https://${signalrServiceName}.service.signalr.net;AuthType=aad;Version=1.0;'
         }
