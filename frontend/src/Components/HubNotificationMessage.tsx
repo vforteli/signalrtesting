@@ -1,13 +1,12 @@
 import React, { useEffect, useState } from 'react'
-import { useSelector } from 'react-redux';
-import { RootState } from '..';
 import { HubConnectionState } from '@microsoft/signalr';
 import { IconButton, Slide, SlideProps, Snackbar } from '@mui/material';
+import { useAppSelector } from '../store/store';
 
 const SlideTransition = (props: SlideProps) => <Slide {...props} direction="down" />
 
 function HubNotificationMessage() {
-    const connectionState = useSelector((state: RootState) => state.signalr.connectionState);
+    const connectionState = useAppSelector(state => state.signalr.connectionState);
     const [message, setMessage] = useState('')
     const [timeout, setTimeout] = useState<number | null>()
     const [open, setOpen] = useState(false)

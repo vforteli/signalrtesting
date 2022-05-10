@@ -1,7 +1,7 @@
 import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { RootState } from '../..';
 import { MessageModel, MessageService } from '../../apiclient';
 import { AckMessagesModel, IndicateTypingModel } from '../../Components/Messages/Models';
+import { createAppAsyncThunk } from '../storeUtils';
 
 
 export const deleteMessage = createAsyncThunk('messages/deleteMessage', async (messageId: string) => {
@@ -12,9 +12,8 @@ export const clearMessages = createAsyncThunk('messages/clearMessages', async ()
   return await MessageService.clearMessage()
 })
 
-export const messageReceived = createAsyncThunk('messages/messageReceived', async (message: MessageModel, { getState }) => {
-  const state = getState() as RootState
-  if (state.app.notificationsEnabled) {
+export const messageReceived = createAppAsyncThunk('messages/messageReceived', async (message: MessageModel, { getState }) => {
+  if (getState().app.notificationsEnabled) {
     new Notification(message.message);
   }
   return message

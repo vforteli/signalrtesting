@@ -1,5 +1,5 @@
-import { createAsyncThunk, createSlice } from '@reduxjs/toolkit'
-import { RootState } from '../..'
+import { createSlice } from '@reduxjs/toolkit'
+import { createAppAsyncThunk } from '../storeUtils';
 
 
 const notificationEnabledKey = 'notificationsEnabled'
@@ -8,9 +8,8 @@ export interface IAppState {
     notificationPermissionGiven: boolean;
 }
 
-export const setNotificationEnabled = createAsyncThunk('app/setNotificationEnabled', async (enabled: boolean, { getState }) => {
-    const state = getState() as RootState
-    if (enabled && !state.app.notificationPermissionGiven) {
+export const setNotificationEnabled = createAppAsyncThunk('app/setNotificationEnabled', async (enabled: boolean, { getState }) => {
+    if (enabled && !getState().app.notificationPermissionGiven) {
         const permission = await Notification.requestPermission()
         if (permission === 'denied') {
             return false
@@ -27,11 +26,10 @@ export const setNotificationEnabled = createAsyncThunk('app/setNotificationEnabl
 })
 
 // maybe load this along with other app stuff
-export const getNotificationEnabled = createAsyncThunk('app/getNotificationEnabled', async (_, { getState }) => {
-    const state = getState() as RootState
+export const getNotificationEnabled = createAppAsyncThunk('app/getNotificationEnabled', async (_, { getState }) => {
     const enabled = Boolean(localStorage.getItem(notificationEnabledKey))
 
-    if (enabled && !state.app.notificationPermissionGiven) {
+    if (enabled && !getState().app.notificationPermissionGiven) {
         const permission = await Notification.requestPermission()
         if (permission === 'denied') {
             localStorage.removeItem(notificationEnabledKey)

@@ -1,20 +1,19 @@
 import React, { } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
+import { useDispatch } from 'react-redux'
 import { deleteMessage, setMessageActive, } from '../../store/messages/messagesSlice';
-import { RootState } from '../..';
 import { MessageModel } from '../../apiclient';
 import { Box, Button, Card, CardActions, CardContent, CardHeader, Theme } from '@mui/material';
 import { SxProps } from '@mui/system';
 import DeliveryStatusIcon, { DeliveryStatus } from './DeliveryStatusIcon';
+import { useAppSelector } from '../../store/store';
 
 
 function MessageRow(props: { row: MessageModel }) {
     const dispatch = useDispatch();
 
-    const selectedMessages = useSelector((state: RootState) => state.messages.selectedMessages)
-    const messageAcked = useSelector((state: RootState) => state.messages.ackedMessages[props.row.messageId] ?? false)
-    const user = useSelector((state: RootState) => state.currentUser.user)
-    const active = selectedMessages.includes(props.row.messageId)
+    const active = useAppSelector(state => state.messages.selectedMessages.includes(props.row.messageId))
+    const messageAcked = useAppSelector(state => state.messages.ackedMessages[props.row.messageId] ?? false)
+    const user = useAppSelector(state => state.currentUser.user)
 
     const status: DeliveryStatus = messageAcked
         ? 'Delivered'

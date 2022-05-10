@@ -1,22 +1,22 @@
 import React, { useEffect } from 'react'
 import MessageList from './MessageList';
 import SendMessageForm from './SendMessageForm';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { clearMessages } from '../../store/messages/messagesSlice';
-import { RootState } from '../..';
 import { getNotificationEnabled, setNotificationEnabled } from '../../store/app/appSlice';
 import { FormGroup, FormControlLabel, Switch, Box, Button } from '@mui/material';
 import { HubConnectionState } from '@microsoft/signalr';
+import { useAppSelector } from '../../store/store';
 
 
 function MessageContainer() {
     const chatId = '00000000-0000-0000-0000-000000000000'
 
     const dispatch = useDispatch()
-    const isLoggedIn = useSelector((state: RootState) => state.currentUser.isLoggedIn)
-    const isNotificationsEnabled = useSelector((state: RootState) => state.app.notificationsEnabled)
-    const hubState = useSelector((state: RootState) => state.signalr.connectionState)
-    const clearMessagesLoading = useSelector((state: RootState) => state.messages.clearMessagesLoading)
+    const isLoggedIn = useAppSelector(state => state.currentUser.isLoggedIn)
+    const isNotificationsEnabled = useAppSelector(state => state.app.notificationsEnabled)
+    const hubState = useAppSelector(state => state.signalr.connectionState)
+    const clearMessagesLoading = useAppSelector(state => state.messages.clearMessagesLoading)
 
     useEffect(() => {
         if (isLoggedIn) {

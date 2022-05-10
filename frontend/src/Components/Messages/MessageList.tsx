@@ -1,13 +1,12 @@
 import React, { useEffect, useRef } from 'react'
-import { useSelector } from 'react-redux'
-import { RootState } from '../..';
 import MessageRow from './MessageRow';
 import { Grid, Skeleton } from '@mui/material';
 import TypingIndicator from './TypingIndicator';
+import { useAppSelector } from '../../store/store';
 
 function MessageList(props: { chatId: string }) {
-    const messagesLoading = useSelector((state: RootState) => state.messages.messagesLoading)
-    const items = useSelector((state: RootState) => state.messages.items)
+    const messagesLoading = useAppSelector(state => state.messages.messagesLoading)
+    const items = useAppSelector(state => state.messages.items)
     const ref = useRef<null | HTMLDivElement>(null)
     const scrolledToBottom = (window.innerHeight + window.scrollY) >= document.documentElement.scrollHeight
 

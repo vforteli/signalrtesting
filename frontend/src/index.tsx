@@ -3,36 +3,17 @@ import ReactDOM from 'react-dom';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 import { Auth0Provider } from '@auth0/auth0-react';
-import { configureStore } from '@reduxjs/toolkit';
 import { Provider } from 'react-redux'
-import messagesSlice from './store/messages/messagesSlice';
-import signalrSlice from './store/messages/signalrSlice';
-import authenticationSlice from './store/authentication/authenticationSlice';
-import logger from 'redux-logger'
 import { BrowserRouter } from 'react-router-dom';
-import appSlice from './store/app/appSlice';
 import { createTheme, ThemeProvider } from '@mui/material';
 import { getNonceFromCookie } from './Utils';
 import createCache from '@emotion/cache';
 import { CacheProvider } from '@emotion/react';
 import { AppConfig } from './appConfig';
-
-
-const store = configureStore({
-  reducer: {
-    messages: messagesSlice,
-    signalr: signalrSlice,
-    currentUser: authenticationSlice,
-    app: appSlice,
-  },
-  middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(logger)
-})
+import { store } from './store/store';
 
 const cache = createCache({ key: 'app', nonce: getNonceFromCookie(), prepend: true, });
-
 const theme = createTheme();
-
-export type RootState = ReturnType<typeof store.getState>;
 
 ReactDOM.render(
   <React.StrictMode>
