@@ -1,8 +1,12 @@
 {
+    "globals": {
+        "NodeJS": true
+    },
     "env": {
         "browser": true,
         "es2021": true,
-        "jest": true
+        "jest": true,
+        "node": true
     },
     "extends": [
         "eslint:recommended",
@@ -29,6 +33,7 @@
             "single"
         ],
         "react-hooks/rules-of-hooks": "error",
-        "react-hooks/exhaustive-deps": "warn"
+        "react-hooks/exhaustive-deps": "warn",
+        "no-unused-vars": "off"
     }
 }

@@ -1,11 +1,11 @@
-import React, { } from "react"
-import { useDispatch, useSelector } from "react-redux"
-import { deleteMessage, setMessageActive, } from "../../store/messages/messagesSlice";
-import { RootState } from "../..";
-import { MessageModel } from "../../apiclient";
-import { Box, Button, Card, CardActions, CardContent, CardHeader, Theme } from "@mui/material";
-import { SxProps } from "@mui/system";
-import DeliveryStatusIcon, { DeliveryStatus } from "./DeliveryStatusIcon";
+import React, { } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
+import { deleteMessage, setMessageActive, } from '../../store/messages/messagesSlice';
+import { RootState } from '../..';
+import { MessageModel } from '../../apiclient';
+import { Box, Button, Card, CardActions, CardContent, CardHeader, Theme } from '@mui/material';
+import { SxProps } from '@mui/system';
+import DeliveryStatusIcon, { DeliveryStatus } from './DeliveryStatusIcon';
 
 
 function MessageRow(props: { row: MessageModel }) {

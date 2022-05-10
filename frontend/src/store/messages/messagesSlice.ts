@@ -98,13 +98,13 @@ const messagesSlice = createSlice({
       state.items.push(action.payload);
     });
 
-    builder.addCase(deleteMessage.pending, (state) => {
+    builder.addCase(deleteMessage.pending, () => {
       // loading?
     });
     builder.addCase(deleteMessage.fulfilled, (state, action) => {
       state.items = state.items.filter(o => o.messageId !== action.payload.messageId);
     });
-    builder.addCase(deleteMessage.rejected, (state, action) => {
+    builder.addCase(deleteMessage.rejected, (_state, action) => {
       console.debug(action.error)
     });
 

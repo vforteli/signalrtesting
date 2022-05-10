@@ -1,9 +1,9 @@
-import { Fragment } from "react"
-import { useSelector } from "react-redux"
-import { RootState } from "../..";
-import { Box } from "@mui/material";
+import { Fragment } from 'react'
+import { useSelector } from 'react-redux'
+import { RootState } from '../..';
+import { Box } from '@mui/material';
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
-import React from "react";
+import React from 'react';
 
 function TypingIndicator(props: { chatId: string }) {
     const typing = useSelector((state: RootState) => state.messages.typing[props.chatId])

@@ -96,7 +96,7 @@ export const MessagesContextProvider: FC = ({ children }) => {
     }, [connection, isAuthenticated, dispatch])
 
 
-    const throttledIndicateTyping = throttle(async (chatId: string) => { await connection.send("indicateTyping", chatId) }, 1000, { leading: true, trailing: false })
+    const throttledIndicateTyping = throttle(async (chatId: string) => { await connection.send('indicateTyping', chatId) }, 1000, { leading: true, trailing: false })
 
     const send = async (chatId: string, message: string) => {
         dispatch(sendMessage({ chatId: chatId, message: message }))

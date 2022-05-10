@@ -1,10 +1,10 @@
-import React, { useState } from "react"
-import { useSelector } from "react-redux";
-import { HubConnectionState } from "@microsoft/signalr";
-import { RootState } from "../..";
-import { Divider, IconButton, InputBase, Paper } from "@mui/material";
+import React, { useState } from 'react'
+import { useSelector } from 'react-redux';
+import { HubConnectionState } from '@microsoft/signalr';
+import { RootState } from '../..';
+import { Divider, IconButton, InputBase, Paper } from '@mui/material';
 import SendIcon from '@mui/icons-material/Send';
-import { useMessages } from "./MessagesContext";
+import { useMessages } from './MessagesContext';
 
 function SendMessageForm(props: { chatId: string }) {
     const [message, setMessage] = useState('');

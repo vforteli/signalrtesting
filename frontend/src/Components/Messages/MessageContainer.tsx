@@ -1,12 +1,12 @@
-import React, { useEffect } from "react"
-import MessageList from "./MessageList";
-import SendMessageForm from "./SendMessageForm";
-import { useDispatch, useSelector } from "react-redux";
-import { clearMessages } from "../../store/messages/messagesSlice";
-import { RootState } from "../..";
-import { getNotificationEnabled, setNotificationEnabled } from "../../store/app/appSlice";
-import { FormGroup, FormControlLabel, Switch, Box, Button } from "@mui/material";
-import { HubConnectionState } from "@microsoft/signalr";
+import React, { useEffect } from 'react'
+import MessageList from './MessageList';
+import SendMessageForm from './SendMessageForm';
+import { useDispatch, useSelector } from 'react-redux';
+import { clearMessages } from '../../store/messages/messagesSlice';
+import { RootState } from '../..';
+import { getNotificationEnabled, setNotificationEnabled } from '../../store/app/appSlice';
+import { FormGroup, FormControlLabel, Switch, Box, Button } from '@mui/material';
+import { HubConnectionState } from '@microsoft/signalr';
 
 
 function MessageContainer() {

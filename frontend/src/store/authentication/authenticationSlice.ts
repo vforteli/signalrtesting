@@ -16,7 +16,7 @@ const authenticationSlice = createSlice({
     name: 'signalr',
     initialState: initialAuthenticationState,
     reducers: {
-        setCurrentUser(state, action: PayloadAction<IAuthenticationState>) {
+        setCurrentUser(_state, action: PayloadAction<IAuthenticationState>) {
             return action.payload
         },
         clearCurrentUser() {
