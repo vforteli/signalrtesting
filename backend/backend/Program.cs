@@ -17,7 +17,7 @@ public class Program
     public static void Main(string[] args)
     {
         var builder = WebApplication.CreateBuilder(args);
-        // todo fix this when verified
+
         builder.Services.Configure<TelemetryConfiguration>(config => config.SetAzureTokenCredential(new DefaultAzureCredential()));
         builder.Services.AddApplicationInsightsTelemetry();
 

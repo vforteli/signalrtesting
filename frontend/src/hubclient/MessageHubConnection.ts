@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import type { HubConnection } from '@microsoft/signalr';
 import { MessageModel } from '../apiclient';
 import { AckMessagesModel, IndicateTypingModel } from '../Components/Messages/Models';

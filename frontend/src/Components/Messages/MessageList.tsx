@@ -1,9 +1,9 @@
-import React, { useEffect, useRef } from "react"
-import { useSelector } from "react-redux"
-import { RootState } from "../..";
-import MessageRow from "./MessageRow";
-import { Grid, Skeleton } from "@mui/material";
-import TypingIndicator from "./TypingIndicator";
+import React, { useEffect, useRef } from 'react'
+import { useSelector } from 'react-redux'
+import { RootState } from '../..';
+import MessageRow from './MessageRow';
+import { Grid, Skeleton } from '@mui/material';
+import TypingIndicator from './TypingIndicator';
 
 function MessageList(props: { chatId: string }) {
     const messagesLoading = useSelector((state: RootState) => state.messages.messagesLoading)
